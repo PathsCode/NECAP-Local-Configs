@@ -155,7 +155,7 @@ input {
 .update-rules {
     width: 250px;
 
-    background-color: var(--BLUE-RESET);
+    background-color: var(--RED);
 
     font-size: 1em;
 }
