@@ -97,12 +97,14 @@ input {
     margin-right: 20px;
 }
 
-#login-form input {
+#login-form input[type=text], #login-form input[type=password] {
     width: 250px;
 }
 
 #login-form input[type=submit] {
+    width: 200px;
     margin-top: 25px;
+
     background-color: red;
 } 
 
@@ -114,11 +116,42 @@ input {
     margin: 36px 0 !important;
 }
 
-.rules {
+.reles {
     width: 80%;
     padding: 30px 2.5%; 
+    margin-bottom: 60px;
 
     border-radius: 20px;
 
     background-color: white;
+}
+
+.rele {
+    width: 96%;
+    padding: 15px 2%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.rele:not(:first-of-type) {
+    margin-top: 24px;
+}
+
+.rele {
+    margin-bottom: 24px;
+}
+
+.rele h2 {
+    text-transform: uppercase;
+}
+
+.update-rules {
+    width: 250px;
+
+    background-color: var(--BLUE-RESET);
+
+    font-size: 1em;
 }

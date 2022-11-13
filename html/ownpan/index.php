@@ -45,9 +45,14 @@ if (file_exists("/srv/data/sysname")) {
             </form>
         </div>
         <h1 class="rules-title">Regole</h1>
-        <div class="rules">
-            c
-        </div>
+        <form class="reles">
+            <?php for ($releId = 1; $releId <= 8; $releId ++) : ?>
+                <div class="rele">
+                    <h2>Relè <?= $releId; ?></h2>
+                </div>
+            <?php endfor; ?>
+            <input name="submit" type="submit" value="Salva modifiche" class="confirm-button update-rules">
+        </form>
     </body>
 
 </html>
