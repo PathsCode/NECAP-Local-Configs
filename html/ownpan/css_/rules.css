@@ -1,0 +1,124 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+
+    font-family: 'Noto Sans', sans-serif;
+    overflow-wrap: break-word;
+
+    text-align: center;
+}
+
+:root {
+
+    --WHITE: #ffffff;
+    --RED: #ff0000;
+    --GREEN: #00ff00;
+    --BLUE: #0000ff;
+    
+    --PAGE-TOP: rgb(235, 235, 235);
+    --PAGE-BOTTOM: rgb(194, 194, 194);
+    
+    --GREEN-SAVE: #00e60b;
+    --BLUE-RESET: rgb(3, 142, 235);
+    --RED-DELETE: #ff0000;
+    --GREY-DISABLED: #a8a8a8;
+
+}
+
+html {
+    background: linear-gradient(to bottom, var(--PAGE-TOP), var(--PAGE-BOTTOM));
+    min-height: 100vh;
+    
+    font-size: 23px;
+}
+
+h1 {
+    margin-top: 30px;
+    color: red;
+}
+
+input {
+    font-size: 0.9em;
+}
+
+.none {
+    display: none;
+}
+
+.flex {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.flex-vertical {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.confirm-button {
+    padding: 6px; 
+
+    border: none;
+    border-radius: 100px;
+
+    color: white;
+    font-weight: bold;
+}
+
+#login {
+    width: 80%;
+    margin-top: 30px;
+    padding: 30px 2.5%; 
+
+    border-radius: 20px;
+
+    background-color: white;
+}
+
+#login > b {
+    font-size: 1.5em;
+    margin-bottom: 25px;
+}
+
+#login-form {
+    justify-content: space-around;
+}
+
+#login-form > div {
+    display: flex;
+}
+
+#login-form > div > div:not(:last-child), #login-form > div > div > *:not(:last-child) {
+    margin-right: 20px;
+}
+
+#login-form input {
+    width: 250px;
+}
+
+#login-form input[type=submit] {
+    margin-top: 25px;
+    background-color: red;
+} 
+
+#login #error-login {
+    margin-top: 25px;
+}
+
+.rules-title {
+    margin: 36px 0 !important;
+}
+
+.rules {
+    width: 80%;
+    padding: 30px 2.5%; 
+
+    border-radius: 20px;
+
+    background-color: white;
+}

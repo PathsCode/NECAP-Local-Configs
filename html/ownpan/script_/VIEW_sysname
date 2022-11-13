@@ -1,0 +1,9 @@
+#!/bin/bash
+
+mySysName=$(cat /var/www/html/ownpan/data_/SystemName.cnf)
+
+if [[ $mySysName ]]; then
+  echo -e "<pre> $mySysName </pre>"
+else
+  echo -e "<pre> Not Found </pre>"
+fi

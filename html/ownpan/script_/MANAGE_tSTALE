@@ -1,0 +1,21 @@
+#!/bin/bash
+
+command=$1
+value1=$2
+
+fileName=/srv/data/tSTALE
+
+case $command in
+  change)  if [[ $value1 -gt 0 ]]; then
+		echo -e "$value1" > /srv/data/tSTALE #$filename
+	else
+		echo -e "20" > /srv/data/tSTALE #$filename
+	fi
+  ;;
+  showTSTALE) if [[ ! -f $fileName ]]; then
+		  echo -e "<font color='red'>Not set</font>"
+	    else
+                  echo -e "<font color='green'>$(cat $fileName)</font>"
+            fi
+  ;;
+esac

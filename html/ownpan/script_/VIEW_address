@@ -1,0 +1,15 @@
+#!/bin/bash
+
+myAddresses=$(/sbin/ip a|grep inet|egrep -v "inet6|127.0.0.1"|awk '{print $2}')
+
+if [[ $myAddresses ]]; then
+  for myAddress in $myAddresses; do
+    echo -e "<pre>"
+    echo -e " $myAddress"
+    echo -e "</pre>"
+  done
+else
+  echo -e "<pre> Not Found </pre>"
+fi
+  
+

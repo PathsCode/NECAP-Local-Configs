@@ -1,0 +1,64 @@
+#!/bin/bash
+
+command=$1
+value1=$2
+value2=$3
+
+myConf=/srv/cluster/clus.cnf
+
+show_fun(){
+case $value1 in
+  enabled) value=$(/bin/cat $myConf|grep ^0x01|cut -d= -f2)
+  ;;
+  role) value=$(/bin/cat $myConf|grep ^0x02|cut -d= -f2)
+  ;;
+  mode) value=$(/bin/cat $myConf|grep ^0x03|cut -d= -f2)
+  ;;
+  deadline) value=$(/bin/cat $myConf|grep ^0x04|cut -d= -f2)
+  ;;
+  companion) value=$(/bin/cat $myConf|grep ^0x05|cut -d= -f2)
+  ;;
+  *) echo "Value1 Error"
+     exit
+  ;;
+esac
+
+if [[ $value ]]; then
+  echo -e "<font color='green'>$value</font>"
+else
+  echo -e "<font color='red'>Not Found</font>"
+fi
+}
+
+change_fun(){
+case $value1 in
+  enabled) value=$(/bin/cat $myConf|grep ^0x01|cut -d= -f2)
+           /bin/sed -i "s/0x01:enabled=$value/0x01:enabled=$value2/" $myConf
+  ;;
+  role) value=$(/bin/cat $myConf|grep ^0x02|cut -d= -f2)
+        /bin/sed -i "s/0x02:role=$value/0x02:role=$value2/" $myConf
+  ;;
+  mode) value=$(/bin/cat $myConf|grep ^0x03|cut -d= -f2)
+        /bin/sed -i "s/0x03:mode=$value/0x03:mode=$value2/" $myConf
+  ;;
+  deadline) value=$(/bin/cat $myConf|grep ^0x04|cut -d= -f2)
+            /bin/sed -i "s/0x04:deadline=$value/0x04:deadline=$value2/" $myConf
+  ;;
+  companion) value=$(/bin/cat $myConf|grep ^0x05|cut -d= -f2)
+             /bin/sed -i "s/0x05:companion=$value/0x05:companion=$value2/" $myConf
+  ;;
+  *) echo "Value1 Error"
+     exit
+  ;;
+esac
+}
+
+
+case $command in
+  show) show_fun
+  ;;
+  change) change_fun
+  ;;
+  *) echo "Command Error"
+  ;;
+esac

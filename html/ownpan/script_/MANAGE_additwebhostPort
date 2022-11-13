@@ -1,0 +1,26 @@
+#!/bin/bash
+# VT - marzo 2017: gestione numero porta del web server
+command=$1
+value1=$2
+
+if [[ ! $command ]]; then
+myStatus=$(cat /srv/data/webhost2_port)
+
+  if [[ $myStatus ]]; then
+    echo -e "<font color='green'>$myStatus</font>"
+  else
+    echo -e "<font color='red'>Not set</font>"
+  fi
+  exit
+#fi
+else
+#case $command in
+#  change)  #Change value
+           if [[ $value1 -lt 1 || $value1 -gt 65535 ]]; then
+             echo -e "80" > /srv/data/webhost2_port
+           else
+             echo -e "$value1" > /srv/data/webhost2_port
+           fi
+#  ;;
+#esac
+fi

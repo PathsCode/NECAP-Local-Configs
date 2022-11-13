@@ -1,0 +1,9 @@
+#!/bin/bash
+
+mySerial=$(cat /proc/cpuinfo|grep Serial|cut -d: -f2)
+
+if [[ $mySerial ]];then
+  echo -e "<pre> $mySerial </pre>"
+else
+  echo -e "<pre> Not Found </pre>"
+fi

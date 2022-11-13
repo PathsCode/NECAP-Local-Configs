@@ -1,0 +1,21 @@
+#!/bin/bash
+
+command=$1
+
+if [[ ! $command ]]; then
+myStatus=$(/usr/bin/uptime)
+
+  if [[ $(echo $myStatus|wc -l) -eq 0 ]]; then
+    echo -e "<pre><font color="red">$myStatus</font></pre>"
+  else
+    echo -e "<pre><font color="green">$myStatus</font></pre>"
+  fi
+  exit
+fi
+echo "$(date)MANAGE System reboot Issued $command" >> /var/www/html/ownpan/logs_/log.txt
+case $command in
+  reboot) /usr/bin/sudo /sbin/init 6
+  ;;
+esac
+
+

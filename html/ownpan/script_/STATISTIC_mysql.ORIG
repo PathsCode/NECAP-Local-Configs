@@ -1,0 +1,726 @@
+#!/bin/bash
+
+conf=/var/www/html/ownpan/conf_/basic.php
+dbuser=$(/bin/grep dbuser $conf|cut -d= -f2|sed 's/\"//g'|sed 's/;//g')
+dbpass=$(/bin/grep dbpass $conf|cut -d= -f2|sed 's/\"//g'|sed 's/;//g')
+dbname=$(/bin/grep dbname $conf|cut -d= -f2|sed 's/\"//g'|sed 's/;//g')
+dbtbhex=$(/bin/grep dbtbhex $conf|cut -d= -f2|sed 's/\"//g'|sed 's/;//g')
+dbtbdec=$(/bin/grep dbtbdec $conf|cut -d= -f2|sed 's/\"//g'|sed 's/;//g')
+dbtbupl=$(/bin/grep dbtbupl $conf|cut -d= -f2|sed 's/\"//g'|sed 's/;//g')
+dbtbslow=$(/bin/grep dbtbslow $conf|cut -d= -f2|sed 's/\"//g'|sed 's/;//g')
+dblogin="-u$dbuser -p$dbpass $dbname"
+command=$1
+value1=$2
+value2=$3
+allValues=$@
+downloadpath=/var/www/html/ownpan/download
+
+goBack(){
+echo -e "<a href=\"javascript:history.go(-1)\"><b>GoBack</b></a>"
+}
+
+advquery(){
+num=$1
+echo -e "data <b>of</b>"
+
+allData=$(/usr/bin/mysql $dblogin -e "select CID from DEC_INPUT_TB group by CID;")
+
+echo -e "<select name=cli$num>"
+for Data in $allData; do
+  echo -e "<option value=$Data>$Data</option>"
+done
+echo -e "</select>"
+
+echo -e "<b>quantity</b>"
+echo -e "<select name=qty$num>"
+for Data in 100 10 50 100 200 300 500; do
+  echo -e "<option value=$Data>$Data</option>"
+done
+echo -e "</select>"
+
+echo -e "<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<b><font color='green'>start</font></b> date:"
+
+echo -e "Y"
+echo -e "<select name=fromyear$num>"
+for Data in $(seq 2014 $(date +"%Y")); do
+  echo -e "<option value=$Data>$Data</option>"
+done
+echo -e "</select>"
+
+echo -e "M"
+echo -e "<select name=frommonth$num>"
+for Data in $(seq 1 12); do
+  if [[ $Data -lt 10 ]]; then
+    Data="0$Data"
+  fi
+  echo -e "<option value=$Data>$Data</option>"
+done
+echo -e "</select>"
+
+echo -e "D"
+echo -e "<select name=fromday$num>"
+for Data in $(seq 1 31); do
+  if [[ $Data -lt 10 ]]; then
+    Data="0$Data"
+  fi
+  echo -e "<option value=$Data>$Data</option>"
+done
+echo -e "</select>"
+
+echo -e "<b>and</b> time:"
+
+echo -e "H"
+echo -e "<select name=fromhour$num>"
+for Data in $(seq 0 23); do
+  if [[ $Data -lt 10 ]]; then
+    Data="0$Data"
+  fi
+  echo -e "<option value=$Data>$Data</option>"
+done
+echo -e "</select>"
+
+echo -e "M"
+echo -e "<select name=fromminute$num>"
+for Data in $(seq 0 59); do
+  if [[ $Data -lt 10 ]]; then
+    Data="0$Data"
+  fi
+  echo -e "<option value=$Data>$Data</option>"
+done
+echo -e "</select>"
+
+#2ND RIGA
+echo -e "<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<b><font color='red'>stop</font></b>&nbsp date:"
+
+echo -e "Y"
+echo -e "<select name=toyear$num>"
+for Data in $(seq 2014 $(date +"%Y")); do
+  echo -e "<option value=$Data>$Data</option>"
+done
+echo -e "</select>"
+
+echo -e "M"
+echo -e "<select name=tomonth$num>"
+for Data in $(seq 1 12); do
+  if [[ $Data -lt 10 ]]; then
+    Data="0$Data"
+  fi
+  echo -e "<option value=$Data>$Data</option>"
+done
+echo -e "</select>"
+
+echo -e "D"
+echo -e "<select name=today$num>"
+for Data in $(seq 1 31); do
+  if [[ $Data -lt 10 ]]; then
+    Data="0$Data"
+  fi
+  echo -e "<option value=$Data>$Data</option>"
+done
+echo -e "</select>"
+
+echo -e "<b>and</b> time:"
+
+echo -e "H"
+echo -e "<select name=tohour$num>"
+for Data in $(seq 0 23); do
+  if [[ $Data -lt 10 ]]; then
+    Data="0$Data"
+  fi
+  echo -e "<option value=$Data>$Data</option>"
+done
+echo -e "</select>"
+
+echo -e "M"
+echo -e "<select name=tominute$num>"
+for Data in $(seq 0 59); do
+  if [[ $Data -lt 10 ]]; then
+    Data="0$Data"
+  fi
+  echo -e "<option value=$Data>$Data</option>"
+done
+echo -e "</select>"
+}
+stdquery(){
+num=$1
+echo -e "data <b>of</b>"
+
+allData=$(/usr/bin/mysql $dblogin -e "select CID from DEC_INPUT_TB group by CID;")
+
+echo -e "<select name=cli$num>"
+for Data in $allData; do
+  echo -e "<option value=$Data>$Data</option>"
+done
+echo -e "</select>"
+
+echo -e "<b>quantity</b>"
+echo -e "<select name=qty$num>"
+for Data in 100 10 50 100 200 300 500; do
+  echo -e "<option value=$Data>$Data</option>"
+done
+echo -e "</select>"
+
+}
+timequery(){
+num=$1
+echo -e "data <b>of</b>"
+
+allData=$(/usr/bin/mysql $dblogin -e "select CID from DEC_INPUT_TB group by CID;")
+
+echo -e "<b>quantity</b>"
+echo -e "<select name=qty$num>"
+for Data in 100 10 50 100 200 300 500; do
+  echo -e "<option value=$Data>$Data</option>"
+done
+echo -e "</select>"
+
+echo -e "<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<b><font color='green'>start</font></b> date:"
+
+echo -e "Y"
+echo -e "<select name=fromyear$num>"
+for Data in $(seq 2014 $(date +"%Y")); do
+  echo -e "<option value=$Data>$Data</option>"
+done
+echo -e "</select>"
+
+echo -e "M"
+echo -e "<select name=frommonth$num>"
+for Data in $(seq 1 12); do
+  if [[ $Data -lt 10 ]]; then
+    Data="0$Data"
+  fi
+  echo -e "<option value=$Data>$Data</option>"
+done
+echo -e "</select>"
+
+echo -e "D"
+echo -e "<select name=fromday$num>"
+for Data in $(seq 1 31); do
+  if [[ $Data -lt 10 ]]; then
+    Data="0$Data"
+  fi
+  echo -e "<option value=$Data>$Data</option>"
+done
+echo -e "</select>"
+
+echo -e "<b>and</b> time:"
+
+echo -e "H"
+echo -e "<select name=fromhour$num>"
+for Data in $(seq 0 23); do
+  if [[ $Data -lt 10 ]]; then
+    Data="0$Data"
+  fi
+  echo -e "<option value=$Data>$Data</option>"
+done
+echo -e "</select>"
+
+echo -e "M"
+echo -e "<select name=fromminute$num>"
+for Data in $(seq 0 59); do
+  if [[ $Data -lt 10 ]]; then
+    Data="0$Data"
+  fi
+  echo -e "<option value=$Data>$Data</option>"
+done
+echo -e "</select>"
+
+#2ND RIGA
+echo -e "<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<b><font color='red'>stop</font></b>&nbsp date:"
+
+echo -e "Y"
+echo -e "<select name=toyear$num>"
+for Data in $(seq 2014 $(date +"%Y")); do
+  echo -e "<option value=$Data>$Data</option>"
+done
+echo -e "</select>"
+
+echo -e "M"
+echo -e "<select name=tomonth$num>"
+for Data in $(seq 1 12); do
+  if [[ $Data -lt 10 ]]; then
+    Data="0$Data"
+  fi
+  echo -e "<option value=$Data>$Data</option>"
+done
+echo -e "</select>"
+
+echo -e "D"
+echo -e "<select name=today$num>"
+for Data in $(seq 1 31); do
+  if [[ $Data -lt 10 ]]; then
+    Data="0$Data"
+  fi
+  echo -e "<option value=$Data>$Data</option>"
+done
+echo -e "</select>"
+
+echo -e "<b>and</b> time:"
+
+echo -e "H"
+echo -e "<select name=tohour$num>"
+for Data in $(seq 0 23); do
+  if [[ $Data -lt 10 ]]; then
+    Data="0$Data"
+  fi
+  echo -e "<option value=$Data>$Data</option>"
+done
+echo -e "</select>"
+
+echo -e "M"
+echo -e "<select name=tominute$num>"
+for Data in $(seq 0 59); do
+  if [[ $Data -lt 10 ]]; then
+    Data="0$Data"
+  fi
+  echo -e "<option value=$Data>$Data</option>"
+done
+echo -e "</select>"
+
+}
+
+mode101(){
+/usr/bin/mysql $dblogin -e "UPDATE UPL_INPUT_TB SET UPLOADED='y' WHERE UPLOADED='n';"
+echo -e "All data set to UPLOADED<br>"
+goBack
+}
+
+mode2(){
+allData=$(/usr/bin/mysql $dblogin -e "select CID from UPL_INPUT_TB where UPLOADED='n' group by CID;"|egrep -v -w CID)
+goBack
+echo -e "<table border=1 style='width:100%'>"
+echo -e "<tr bgcolor='yellow'><td>ID Centralina</td><td>Pending uploads</td></tr>"
+for Data in $allData; do
+  dataForeach=$(/usr/bin/mysql $dblogin -e "select * from UPL_INPUT_TB where CID='$Data' and UPLOADED='n'" |wc -l)
+  echo -e "<tr><td ><b>$Data</td><td><b><font color=red>$dataForeach</font></td></tr>"
+done
+echo -e "</table>"
+goBack
+}
+
+mode3(){
+opt=$@
+if [[ $opt ]]; then
+  cid=$3
+  qty=$4
+    query="select * from $dbtbupl where CID='$cid' AND UPLOADED='n' ORDER by ID desc LIMIT $qty"
+    allData=$(/usr/bin/mysql -s -N $dblogin -e "$query")
+    numData=$(/usr/bin/mysql -s -N $dblogin -e "$query" |wc -l)
+else
+  allData=$(/usr/bin/mysql -s -N $dblogin -e "select * from UPL_INPUT_TB where UPLOADED='n' ORDER BY ID DESC LIMIT 100;")
+  numData=$(/usr/bin/mysql -s -N $dblogin -e "select * from UPL_INPUT_TB where UPLOADED='n';" |wc -l)
+fi
+
+lastcolumn=3 #last col -1 (20:30:50 10/10/2015 are two columns)
+
+goBack
+echo -e "Trovati <b><font color=red> $numData </font></b> risultati"
+echo -e "<table border=1 style='width:100%'>"
+echo -e "<tr bgcolor='yellow'><td>ID</td><td>ID Centralina</td><td>Transmitted String</td><td>TimeStamp</td><td>Uploaded</td></tr>"
+
+counter=0 #First col
+dataMerge=""
+for Data in $allData; do
+  if [[ $counter -gt lastcolumn ]]; then
+    echo "\
+<tr><td>${MY[0]}</td><td><b>${MY[1]}</b></td><td>$dataMerge</td><td>${MY[2]}</td><td>${MY[3]}</td></tr>"
+    counter=0
+    dataMerge=""
+    #unset MY
+    MY[$counter]="$Data"
+    ((counter++))
+  else
+    case $Data in
+      r=*|t=*|s\[*) dataMerge="$dataMerge $Data"
+      ;;
+      *) MY[$counter]="$Data"
+       ((counter++))
+      ;;
+    esac
+  fi
+done
+echo -e "<tr><td>${MY[0]}</td><td><b>${MY[1]}</b></td><td>$dataMerge</td><td>${MY[2]}</td><td>${MY[3]}</td></tr>"
+echo -e "<tr bgcolor='yellow'><td>ID</td><td>ID Centralina</td><td>Transmitted String</td><td>TimeStamp</td><td>Uploaded</td></tr>"
+echo -e "</table>"
+goBack
+}
+mode14(){
+
+opt=$@
+if [[ $opt ]]; then
+  cid=$3
+  qty=$4
+  fdate="$7/$6/$5 $8:$9"
+  tdate="${12}/${11}/${10} ${13}:${14}"
+  query="select * from $dbtbupl where CID='$cid' AND UPLOADED='y' AND UTIME between '$fdate' and '$tdate' ORDER by ID desc LIMIT $qty"
+  allData=$(/usr/bin/mysql -s -N $dblogin -e "$query")
+  numData=$(/usr/bin/mysql -s -N $dblogin -e "$query"|wc -l)
+else
+  allData=$(/usr/bin/mysql -s -N $dblogin -e "select * from UPL_INPUT_TB where UPLOADED='y' ORDER BY ID DESC LIMIT 100;")
+  numData=$(/usr/bin/mysql -s -N $dblogin -e "select * from UPL_INPUT_TB where UPLOADED='y';" |wc -l)
+fi
+lastcolumn=4 #last col -1 (20:30:50 10/10/2015 are two columns)
+
+goBack
+echo -e "Trovati <b><font color=red> $numData </font></b> risultati"
+echo -e "<table border=1 style='width:100%'>"
+echo -e "<tr bgcolor='yellow'><td>ID</td><td>ID Centralina</td><td>Transmitted String</td><td>Date</td><td>Time</td><td>Uploaded</td></tr>"
+
+counter=0 #First col
+dataMerge=""
+for Data in $allData; do
+  if [[ $counter -gt $lastcolumn ]]; then
+    echo "\
+<tr><td>${MY[0]}</td><td><b>${MY[1]}</b></td><td>$dataMerge</td><td>${MY[2]}</td><td>${MY[3]}</td><td>${MY[4]}</td></tr>"
+    counter=0
+    dataMerge=""
+    MY[$counter]="$Data"
+    ((counter++))
+  else
+    case $Data in
+      r=*|t=*|s\[*) dataMerge="$dataMerge $Data"
+      ;;
+      *) MY[$counter]="$Data"
+       ((counter++))
+      ;;
+    esac
+  fi
+done
+#last entry
+echo "\
+<tr><td>${MY[0]}</td><td><b>${MY[1]}</b></td><td>$dataMerge</td><td>${MY[2]}</td><td>${MY[3]}</td><td>${MY[4]}</td></tr>"
+echo -e "<tr bgcolor='yellow'><td>ID</td><td>ID Centralina</td><td>Transmitted String</td><td>Date</td><td>Time</td><td>Uploaded</td></tr>"
+echo -e "</table>"
+goBack
+}
+
+mode15(){
+
+opt=$@
+if [[ $opt ]]; then
+  qty=$3
+  fdate="$4-$5-$6 $7:$8"
+  tdate="$9-${10}-${11} ${12}:${13}"
+
+  echo "VALUES: QTY $qty , FDATE $fdate , TDATE $tdate<br>"
+  query="select * from $dbtbhex where RTIME between '$fdate' and '$tdate' ORDER by ID desc LIMIT $qty"
+  echo "MYQUERY $query <br>"
+  allData=$(/usr/bin/mysql -s -N $dblogin -e "$query")
+  numData=$(/usr/bin/mysql -s -N $dblogin -e "$query"|wc -l)
+else
+  allData=$(/usr/bin/mysql -s -N $dblogin -e "select * from $dbtbhex ORDER BY ID DESC LIMIT 100;")
+  numData=$(/usr/bin/mysql -s -N $dblogin -e "select * from $dbtbhex ;" |wc -l)
+fi
+lastcolumn=4 #last col -1 (20:30:50 10/10/2015 are two columns)
+
+goBack
+echo -e "Trovati <b><font color=red> $numData </font></b> risultati"
+echo -e "<table border=1 style='width:100%'>"
+echo -e "<tr bgcolor='yellow'><td>ID</td><td>Hex String Received</td><td>Date</td><td>Time</td><td>Converted</td></tr>"
+
+counter=0 #First col
+for Data in $allData; do
+  if [[ $counter -gt $lastcolumn ]]; then
+    echo "\
+<tr><td>${MY[0]}</td><td><b>${MY[1]}</b></td><td>${MY[2]}</td><td>${MY[3]}</td><td>${MY[4]}</td></tr>"
+    counter=0
+    MY[$counter]="$Data"
+    ((counter++))
+  else
+    MY[$counter]="$Data"
+    ((counter++))
+  fi
+done
+#last entry
+echo "\
+<tr><td>${MY[0]}</td><td><b>${MY[1]}</b></td><td>${MY[2]}</td><td>${MY[3]}</td><td>${MY[4]}</td></tr>"
+echo -e "<tr bgcolor='yellow'><td>ID</td><td>Hex String Received</td><td>Date</td><td>Time</td><td>Converted</td></tr>"
+echo -e "</table>"
+goBack
+}
+mode4(){
+allData=$(/usr/bin/mysql -s -N $dblogin -e "select * from SLOW_UPLOADS order by ID DESC LIMIT 50;")
+lastcolumn=6 #last col -1 (20:30:50 10/10/2015 are two columns)
+
+goBack
+echo -e "<table border=1 style='width:100%'>"
+echo -e "<tr bgcolor='yellow'><td>ID</td><td>MESSAGES</td><td>START</td><td>STOP</td><td>ELAPSED sec.</td><td>DATE</td><td>TIME</td></tr>"
+counter=0 #First col
+for Data in $allData; do
+  if [[ $counter -gt $lastcolumn ]]; then
+    echo "\
+<tr><td>${MY[0]}</td><td>${MY[1]}</td><td>${MY[2]}</td><td>${MY[3]}</td><td>${MY[4]}</td><td>${MY[5]}</td>\
+<td>${MY[6]}</td></tr>"
+    counter=0
+    MY[$counter]="$Data"
+    ((counter++))
+  else
+    MY[$counter]="$Data"
+    ((counter++))
+  fi
+done
+echo -e "</table>"
+#last entry
+echo -e "<tr bgcolor='yellow'><td>ID</td><td>MESSAGES</td><td>START</td><td>STOP</td><td>ELAPSED sec.</td><td>DATE</td><td>TIME</td></tr>"
+echo "\
+<tr><td>${MY[0]}</td><td>${MY[1]}</td><td>${MY[2]}</td><td>${MY[3]}</td><td>${MY[4]}</td><td>${MY[5]}</td>\
+<td>${MY[6]}</td></tr>"
+goBack
+}
+mode5(){
+filename=/var/www/html/ownpan/download/AllDatabases_$(date +"%d%m%Y-%H%M%S").db
+/usr/bin/mysqldump -u$dbuser -p$dbpass --all-databases > $filename
+/bin/gzip -9 $filename
+echo -e "<a href='../../download/'><b>Go To Download Area</b></a>"
+}
+mode6(){
+filename=/var/www/html/ownpan/download/CurrentTable_$(date +"%d%m%Y-%H%M%S").db
+/usr/bin/mysqldump -u$dbuser -p$dbpass $dbname $dbtbdec > $filename
+/bin/gzip -9 $filename
+echo -e "<a href='../../download/'><b>Go To Download Area</b></a>"
+}
+mode7(){
+/bin/rm -f ../../download/*.db.gz
+/bin/rm -f ../../download/*.db
+echo -e "<a href='../statistics.php'><b>Go To Statistics</b></a>"
+}
+
+mode8(){
+allTables=$(/usr/bin/mysql  -s -N $dblogin -e "show tables"|grep $dbtbdec)
+lastcolumn=38
+
+for Table in $allTables; do
+  allData=$(/usr/bin/mysql  -s -N $dblogin -e "select * from $Table")
+  csvFile=ExportOf_"$Table"_inData_$(date +"%d%m%Y-%H%M%S").csv
+
+  echo -e "ID;Client;A1;A2;A3;A4;A5;A6;B7;B8;B9;B10;B11;B12;C13;C14;C15;C16;C17;C18;C19;C20;C21;C22;C23;D24;D25;D26;D27;D28;D29;
+           BAT;RC;TS;RDATE;RTIME;CDATE;CTIME;SND;"  >> $downloadpath/$csvFile
+
+  counter=0
+  for Data in $allData; do
+    if [[ $counter -gt $lastcolumn ]]; then
+    echo -e "\
+${MY[0]};${MY[1]};${MY[2]};${MY[3]};${MY[4]};${MY[5]};\
+${MY[6]};${MY[7]};${MY[8]};${MY[9]};${MY[10]};${MY[11]};\
+${MY[12]};${MY[13]};${MY[14]};${MY[15]};${MY[16]};\
+${MY[17]};${MY[18]};${MY[19]};${MY[20]};${MY[21]};${MY[22]};${MY[23]};\
+${MY[24]};${MY[25]};${MY[26]};${MY[27]};${MY[28]};${MY[29]};${MY[30]};\
+${MY[31]};${MY[32]};${MY[33]};${MY[34]};${MY[35]};${MY[36]};${MY[37]};\
+${MY[38]};" >> $downloadpath/$csvFile
+      counter=0
+      MY[$counter]="$Data"
+      ((counter++))
+    else
+      MY[$counter]="$Data"
+      ((counter++))
+    fi
+  done
+  /bin/gzip -9 $downloadpath/$csvFile
+done
+
+echo -e "<a href='../../download/'><b>Go To Download Area</b></a>"
+}
+mode9(){
+allData=$(/usr/bin/mysql  -s -N $dblogin -e "select * from $dbtbdec")
+lastcolumn=38
+csvFile=CurrentExport_$(date +"%d%m%Y-%H%M%S").csv
+
+echo -e "ID;Client;A1;A2;A3;A4;A5;A6;B7;B8;B9;B10;B11;B12;C13;C14;C15;C16;C17;C18;C19;C20;C21;C22;C23;D24;D25;D26;D27;D28;D29;\
+         BAT;RC;TS;RDATE;RTIME;CDATE;CTIME;SND;"  >> $downloadpath/$csvFile
+
+
+counter=0 #First col
+for Data in $allData; do
+  if [[ $counter -gt $lastcolumn ]]; then
+    #echo "<tr><td align='center'>${MY[*]}</td></tr>"|sed "s% %   %g"
+    echo -e "\
+${MY[0]};${MY[1]};${MY[2]};${MY[3]};${MY[4]};${MY[5]};\
+${MY[6]};${MY[7]};${MY[8]};${MY[9]};${MY[10]};${MY[11]};\
+${MY[12]};${MY[13]};${MY[14]};${MY[15]};${MY[16]};\
+${MY[17]};${MY[18]};${MY[19]};${MY[20]};${MY[21]};${MY[22]};${MY[23]};\
+${MY[24]};${MY[25]};${MY[26]};${MY[27]};${MY[28]};${MY[29]};${MY[30]};\
+${MY[31]};${MY[32]};${MY[33]};${MY[34]};${MY[35]};${MY[36]};${MY[37]};\
+${MY[38]};" >> $downloadpath/$csvFile
+    counter=0
+    MY[$counter]="$Data"
+    ((counter++))
+  else
+    MY[$counter]="$Data"
+    ((counter++))
+  fi
+done
+
+/bin/gzip -9 $downloadpath/$csvFile
+echo -e "<a href='../../download/'><b>Go To Download Area</b></a>"
+}
+mode10(){
+/bin/rm -f ../../download/*.csv.gz
+echo -e "<a href='../../download/'><b>Go To Download Area</b></a>"
+}
+
+mode11(){
+opt=$@
+if [[ $opt ]]; then
+  cid=$3
+  qty=$4
+  fdate="$5-$6-$7 $8:$9"
+  tdate="${10}-${11}-${12} ${13}:${14}"
+
+  query="select * from $dbtbdec where CID='$cid' AND RTIME between '$fdate' and '$tdate' ORDER by ID desc LIMIT $qty"
+  allData=$(/usr/bin/mysql -s -N $dblogin -e "$query")
+else
+  allData=$(/usr/bin/mysql -s -N $dblogin -e "select * from DEC_INPUT_TB ORDER BY ID DESC LIMIT 100;")
+fi
+lastcolumn=38 #last col -1 (20:30:50 10/10/2015 are two columns)
+
+goBack
+echo -e "<table border=1 style='width:100%'>"
+echo -e "<tr bgcolor='yellow'><td>ID</td><td>ID Centr</td><td>A1</td><td>A2</td><td>A3</td><td>A4</td><td>A5</td><td>A6</td>\
+<td>B7</td><td>B8</td><td>B9</td><td>B10</td><td>B11</td><td>B12</td>\
+<td>C13</td><td>C14</td><td>C15</td><td>C16</td><td>C17</td><td>C18</td><td>C19</td><td>C20</td><td>C21</td><td>C22</td>\
+<td>D23</td><td>D24</td><td>D25</td><td>D26</td><td>D27</td><td>D28</td><td>D29</td><td>BAT</td><td>RC</td><td>TS</td><td>RDATE</td><td>RTIME</td><td>CDATE</td><td>CTIME</td><td>SND</td></tr>"
+
+counter=0 #First col
+for Data in $allData; do
+  if [[ $Data == "65534" ]]; then
+    Data=N
+  fi
+  if [[ $counter -gt $lastcolumn ]]; then
+    echo "\
+<tr><td>${MY[0]}</td><td><b>${MY[1]}</b></td><td>${MY[2]}</td><td>${MY[3]}</td><td>${MY[4]}</td><td>${MY[5]}</td>\
+<td>${MY[6]}</td><td>${MY[7]}</td><td>${MY[8]}</td><td>${MY[9]}</td><td>${MY[10]}</td><td>${MY[11]}</td>\
+<td>${MY[12]}</td><td>${MY[13]}</td><td>${MY[14]}</td><td>${MY[15]}</td><td>${MY[16]}</td>\
+<td>${MY[17]}</td><td>${MY[18]}</td><td>${MY[19]}</td><td>${MY[20]}</td><td>${MY[21]}</td><td>${MY[22]}</td><td>${MY[23]}</td>\
+<td>${MY[24]}</td><td>${MY[25]}</td><td>${MY[26]}</td><td>${MY[27]}</td><td>${MY[28]}</td><td>${MY[29]}</td><td>${MY[30]}</td>\
+<td>${MY[31]}</td><td>${MY[32]}</td><td>${MY[33]}</td><td>${MY[34]}</td><td>${MY[35]}</td><td>${MY[36]}</td><td>${MY[37]}</td>\
+<td>${MY[38]}</td></tr>"
+    counter=0
+    #unset MY
+    MY[$counter]="$Data"
+    ((counter++))
+  else
+    MY[$counter]="$Data"
+    ((counter++))
+  fi
+done
+#last data
+echo "\
+<tr><td>${MY[0]}</td><td><b>${MY[1]}</b></td><td>${MY[2]}</td><td>${MY[3]}</td><td>${MY[4]}</td><td>${MY[5]}</td>\
+<td>${MY[6]}</td><td>${MY[7]}</td><td>${MY[8]}</td><td>${MY[9]}</td><td>${MY[10]}</td><td>${MY[11]}</td>\
+<td>${MY[12]}</td><td>${MY[13]}</td><td>${MY[14]}</td><td>${MY[15]}</td><td>${MY[16]}</td>\
+<td>${MY[17]}</td><td>${MY[18]}</td><td>${MY[19]}</td><td>${MY[20]}</td><td>${MY[21]}</td><td>${MY[22]}</td><td>${MY[23]}</td>\
+<td>${MY[24]}</td><td>${MY[25]}</td><td>${MY[26]}</td><td>${MY[27]}</td><td>${MY[28]}</td><td>${MY[29]}</td><td>${MY[30]}</td>\
+<td>${MY[31]}</td><td>${MY[32]}</td><td>${MY[33]}</td><td>${MY[34]}</td><td>${MY[35]}</td><td>${MY[36]}</td><td>${MY[37]}</td>\
+<td>${MY[38]}</td></tr>"
+
+echo -e "<tr bgcolor='yellow'><td>ID</td><td>ID Centr</td><td>A1</td><td>A2</td><td>A3</td><td>A4</td><td>A5</td><td>A6</td>\
+<td>B7</td><td>B8</td><td>B9</td><td>B10</td><td>B11</td><td>B12</td>\
+<td>C13</td><td>C14</td><td>C15</td><td>C16</td><td>C17</td><td>C18</td><td>C19</td><td>C20</td><td>C21</td><td>C22</td>\
+<td>D23</td><td>D24</td><td>D25</td><td>D26</td><td>D27</td><td>D28</td><td>D29</td><td>BAT</td><td>RC</td><td>TS</td><td>RDATE</td><td>RTIME</td><td>CDATE</td><td>CTIME</td><td>SND</td></tr>"
+echo -e "</table>"
+goBack
+}
+
+query_fun(){
+case $value1 in
+  2) 
+     mode2
+  ;;
+  3) 
+     mode3
+  ;;
+  3a) 
+     mode3 $allValues
+  ;;
+  4) 
+     mode4
+  ;;
+  11)
+     mode11
+  ;;
+  11a)
+     mode11 $allValues
+  ;;
+  14)
+     mode14
+  ;;
+  14a)
+     mode14 $allValues
+  ;;
+  15)
+     mode15
+  ;;
+  15a)
+     mode15 $allValues
+  ;;
+  *) echo "$(date) STATISTICS mysql called with some error on value1 $value1" >> /var/www/html/ownpan/logs_/log.txt
+  ;;
+esac
+}
+
+dump_fun(){
+case $value1 in
+  5) 
+     mode5
+  ;;
+  6) 
+     mode6
+  ;;
+  7) 
+     mode7
+  ;;
+  101) 
+     mode101
+  ;;
+  *) echo "$(date) STATISTICS mysql called with some error on value1 $value1" >> /var/www/html/ownpan/logs_/log.txt
+  ;;
+esac
+}
+
+export_fun(){
+case $value1 in
+  8) 
+     mode8
+  ;;
+  9) 
+     mode9
+  ;;
+  10)
+     mode10
+  ;;
+  *) echo "$(date) STATISTICS mysql called with some error on value1 $value1" >> /var/www/html/ownpan/logs_/log.txt
+  ;;
+esac
+}
+
+advquery_fun(){
+advquery $value1
+}
+stdquery_fun(){
+stdquery $value1
+}
+timequery_fun(){
+timequery $value1
+}
+
+if [[ ! $command ]]; then
+  echo "$(date) STATISTICS mysql called with no options.." >> /var/www/html/ownpan/logs_/log.txt
+  exit
+else
+  echo -e "$(date) STATISTICS DEBUGB - command = $command , value1 = $value1.\nALL DATA $@" >> /var/www/html/ownpan/logs_/log.txt
+  case $command in
+    query) query_fun
+    ;;
+    dump) dump_fun
+    ;;
+    export) export_fun
+    ;;
+    advquery) advquery_fun
+    ;;
+    stdquery) stdquery_fun
+    ;;
+    timequery) timequery_fun
+    ;;
+  esac
+fi
+

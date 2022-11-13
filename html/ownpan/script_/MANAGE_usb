@@ -1,0 +1,23 @@
+#!/bin/bash
+
+command=$1
+value1=$2
+myStatus=$(cat /etc/wvdial.conf| egrep -e ^"Modem( |)=" |cut -d"=" -f2|sed s/\"//g)
+
+if [[ ! $command ]]; then
+
+  if [[ $myStatus ]]; then
+    echo -e "<font color='green'>$myStatus</font>"
+  else
+    echo -e "<font color='red'>Not Found</font>"
+  fi
+  exit
+fi
+#echo "$(date)MANAGE System usb Issued $command with value $value1" >> /var/www/html/ownpan/logs_/log.txt
+
+case $command in
+  change) sed "s%$myStatus%$value1%g" /etc/wvdial.conf >/tmp/wvdial.conf
+          cat /tmp/wvdial.conf > /etc/wvdial.conf
+          rm -f /tmp/wvdial.conf
+  ;;
+esac

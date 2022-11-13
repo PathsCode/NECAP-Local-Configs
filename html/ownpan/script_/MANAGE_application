@@ -1,0 +1,16 @@
+#!/bin/bash
+
+command=$1
+value1=$2
+
+fileName=/srv/data/application
+
+case $command in
+  set)  echo -e "$value1" > /srv/data/application
+  ;;
+  show) if [[ ! -f $fileName ]]; then
+		echo -e A > /srv/data/application
+        fi
+        cat $fileName
+  ;;
+esac

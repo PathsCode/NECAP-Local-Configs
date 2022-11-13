@@ -1,0 +1,51 @@
+#!/bin/bash
+
+command=$1
+value1=$2
+value2=$3
+
+myConf=/etc/wpa_supplicant/wpa_supplicant.conf
+currSSID=$(/bin/cat $myConf|egrep -w ^ssid|cut -d"\"" -f2)
+currPSK=$(/bin/cat $myConf|egrep -w ^psk|cut -d"\"" -f2)
+
+setWIFI_fun(){
+#    /bin/cat $myConf |sed "s/ssid=\"$currSSID\"/ssid=\"$value1\"/"|sed "s/psk=\"$currPSK\"/psk=\"$value2\"/" >/tmp/appo
+#    /bin/cat /tmp/appo > $myConf
+#    rm -f /tmp/appo
+echo -e "#country=GB\nctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev\nupdate_config=1\n\nnetwork={\nssid=\"$value1\"">$myConf
+if [[ $value2 ]]; then
+	echo -e "psk=\"$value2\"\n}">>$myConf
+else
+        if [[ $value1 ]]; then
+                echo -e "key_mgmt=NONE\n}">>$myConf
+        else
+                echo -e "\n}">>$myConf
+        fi
+fi
+}
+
+showSSID_fun(){
+if [[ $currSSID ]]; then
+  echo -e "<font color='green'>$currSSID</font>"
+else
+  echo -e "<font color='red'>Not set</font>"
+fi
+exit
+}
+showPSK_fun(){
+if [[ $currPSK ]]; then
+  echo -e "<font color='green'>$currPSK</font>"
+else
+  echo -e "<font color='red'>Not set</font>"
+fi
+exit
+}
+
+case $command in
+  setWIFI) setWIFI_fun
+  ;;
+  showSSID) showSSID_fun
+  ;;
+  showPSK) showPSK_fun
+  ;;
+esac

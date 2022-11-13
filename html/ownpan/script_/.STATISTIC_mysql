@@ -1,0 +1,283 @@
+#!/bin/bash
+
+conf=/var/www/html/ownpan/conf_/basic.php
+dbuser=$(/bin/grep dbuser $conf|cut -d= -f2|sed 's/\"//g'|sed 's/;//g')
+dbpass=$(/bin/grep dbpass $conf|cut -d= -f2|sed 's/\"//g'|sed 's/;//g')
+dbname=$(/bin/grep dbname $conf|cut -d= -f2|sed 's/\"//g'|sed 's/;//g')
+dbtbdec=$(/bin/grep dbtbdec $conf|cut -d= -f2|sed 's/\"//g'|sed 's/;//g')
+dbtbslow=$(/bin/grep dbtbslow $conf|cut -d= -f2|sed 's/\"//g'|sed 's/;//g')
+dblogin="-u$dbuser -p$dbpass $dbname"
+command=$1
+value1=$2
+
+downloadpath=/var/www/html/ownpan/download
+
+goBack(){
+echo -e "<form action='../statistics.php'>"
+echo -e "<input name='submit' type='submit' value='goBack'>"
+echo -e "</form>"
+}
+
+mode1(){
+allData=$(/usr/bin/mysql $dblogin -e "select CLIID from DEC_INPUT_TB group by CLIID;")
+
+goBack
+echo -e "<table border=1 style='width:100%'>"
+for Data in $allData; do
+  echo -e "<tr><td align='center'>$Data</td></tr>"
+done
+echo -e "</table>"
+goBack
+}
+mode2(){
+allData=$(/usr/bin/mysql $dblogin -e "select CLIID from DEC_INPUT_TB where UPLOADED='n' group by CLIID;")
+
+goBack
+echo -e "<table border=1 style='width:100%'>"
+for Data in $allData; do
+  dataForeach=$(/usr/bin/mysql $dblogin -e "select * from DEC_INPUT_TB where CLIID=$Data and UPLOADED='n'" |wc -l)
+  echo -e "<tr><td align='center'><b>$Data</td><td><b><font color=red>$dataForeach</font></td></tr>"
+done
+echo -e "</table>"
+goBack
+}
+mode3(){
+allData=$(/usr/bin/mysql -s -N $dblogin -e "select * from DEC_INPUT_TB where UPLOADED='n' ORDER BY ID DESC LIMIT 50;")
+numData=$(/usr/bin/mysql -s -N $dblogin -e "select * from DEC_INPUT_TB where UPLOADED='n';" |wc -l)
+lastcolumn=18 #last col -1 (20:30:50 10/10/2015 are two columns)
+
+goBack
+echo -e "Trovati <b><font color=red> $numData </font></b> risultati"
+echo -e "<table border=1 style='width:100%'>"
+echo -e "<tr bgcolor='grey'><td>ID</td><td>Client</td><td>D1</td><td>D2</td><td>D3</td><td>D4</td><td>D5</td><td>D6</td><td>D7</td>\
+<td>D8</td><td>D9</td><td>D10</td><td>D11</td><td>D12</td><td>Rec Date</td><td>Rec Time</td><td>Upl Date</td>\
+<td>Upl Time</td><td>OK</td></tr>"
+
+counter=0 #First col
+for Data in $allData; do
+  if [[ $counter -gt $lastcolumn ]]; then
+    #echo "<tr><td align='center'>${MY[*]}</td></tr>"|sed "s% %   %g"
+    echo "\
+<tr><td>${MY[0]}</td><td><b>${MY[1]}</b></td><td>${MY[2]}</td><td>${MY[3]}</td><td>${MY[4]}</td><td>${MY[5]}</td>\
+<td>${MY[6]}</td><td>${MY[7]}</td><td>${MY[8]}</td><td>${MY[9]}</td><td>${MY[10]}</td><td>${MY[11]}</td>\
+<td>${MY[12]}</td><td>${MY[13]}</td><td>${MY[14]}</td><td>${MY[15]}</td><td>${MY[16]}</td>\
+<td>${MY[17]}</td><td>${MY[18]}</td></tr>"
+    counter=0
+    #unset MY
+    MY[$counter]="$Data"
+    ((counter++))
+  else
+    MY[$counter]="$Data"
+    ((counter++))
+  fi
+done
+echo -e "</table>"
+goBack
+}
+mode4(){
+allData=$(/usr/bin/mysql -s -N $dblogin -e "select * from SLOW_UPLOADS order by ID DESC LIMIT 50;")
+lastcolumn=6 #last col -1 (20:30:50 10/10/2015 are two columns)
+
+goBack
+echo -e "<table border=1 style='width:100%'>"
+echo -e "<tr bgcolor='grey'><td>ID</td><td>MESSAGES</td><td>START</td><td>STOP</td><td>ELAPSED sec.</td><td>DATE</td><td>TIME</td></tr>"
+counter=0 #First col
+for Data in $allData; do
+  if [[ $counter -gt $lastcolumn ]]; then
+    #echo "<tr><td align='center'>${MY[*]}</td></tr>"|sed "s% %   %g"
+    echo "\
+<tr><td>${MY[0]}</td><td>${MY[1]}</td><td>${MY[2]}</td><td>${MY[3]}</td><td>${MY[4]}</td><td>${MY[5]}</td>\
+<td>${MY[6]}</td></tr>"
+    counter=0
+    #unset MY
+    MY[$counter]="$Data"
+    ((counter++))
+  else
+    MY[$counter]="$Data"
+    ((counter++))
+  fi
+done
+echo -e "</table>"
+goBack
+}
+mode5(){
+filename=/var/www/html/ownpan/download/AllDatabases_$(date +"%d%m%Y-%H%M%S").db
+/usr/bin/mysqldump -u$dbuser -p$dbpass --all-databases > $filename
+/bin/gzip -9 $filename
+echo -e "<a href='../../download/'><b>Go To Download Area</b></a>"
+}
+mode6(){
+filename=/var/www/html/ownpan/download/CurrentTable_$(date +"%d%m%Y-%H%M%S").db
+/usr/bin/mysqldump -u$dbuser -p$dbpass $dbname $dbtbdec > $filename
+/bin/gzip -9 $filename
+echo -e "<a href='../../download/'><b>Go To Download Area</b></a>"
+}
+mode7(){
+/bin/rm -f ../../download/*.db.gz
+/bin/rm -f ../../download/*.db
+echo -e "<a href='../statistics.php'><b>Go To Statistics</b></a>"
+}
+
+mode8(){
+allTables=$(/usr/bin/mysql  -s -N $dblogin -e "show tables"|grep $dbtbdec)
+lastcolumn=18
+
+for Table in $allTables; do
+  allData=$(/usr/bin/mysql  -s -N $dblogin -e "select * from $Table")
+  csvFile=ExportOf_"$Table"_inData_$(date +"%d%m%Y-%H%M%S").csv
+
+  echo -e "ID;Client;D1;D2;D3;D4;D5;D6;D7;D8;D9;D10;D11;D12;Rec Date;Rec Time;Upl Date;Upl Time;OK" >> $downloadpath/$csvFile
+  counter=0
+  for Data in $allData; do
+    if [[ $counter -gt $lastcolumn ]]; then
+      echo -e "\
+${MY[0]};${MY[1]};${MY[2]};${MY[3]};${MY[4]};${MY[5]};${MY[6]};${MY[7]};${MY[8]};${MY[9]};${MY[10]};\
+${MY[11]};${MY[12]};${MY[13]};${MY[14]};${MY[15]};${MY[16]};${MY[17]};${MY[18]}" >> $downloadpath/$csvFile
+      counter=0
+      #unset MY
+      MY[$counter]="$Data"
+      ((counter++))
+    else
+      MY[$counter]="$Data"
+      ((counter++))
+    fi
+  done
+done
+
+/bin/gzip -9 $downloadpath/$csvFile
+echo -e "<a href='../../download/'><b>Go To Download Area</b></a>"
+}
+mode9(){
+allData=$(/usr/bin/mysql  -s -N $dblogin -e "select * from $dbtbdec")
+lastcolumn=18
+csvFile=CurrentExport_$(date +"%d%m%Y-%H%M%S").csv
+
+echo -e "ID;Client;D1;D2;D3;D4;D5;D6;D7;D8;D9;D10;D11;D12;Rec Date;Rec Time;Upl Date;Upl Time;OK" >> $downloadpath/$csvFile
+
+counter=0 #First col
+for Data in $allData; do
+  if [[ $counter -gt $lastcolumn ]]; then
+    #echo "<tr><td align='center'>${MY[*]}</td></tr>"|sed "s% %   %g"
+    echo -e "\
+${MY[0]};${MY[1]};${MY[2]};${MY[3]};${MY[4]};${MY[5]};${MY[6]};${MY[7]};${MY[8]};${MY[9]};${MY[10]};\
+${MY[11]};${MY[12]};${MY[13]};${MY[14]};${MY[15]};${MY[16]};${MY[17]};${MY[18]}" >> $downloadpath/$csvFile
+    counter=0
+    #unset MY
+    MY[$counter]="$Data"
+    ((counter++))
+  else
+    MY[$counter]="$Data"
+    ((counter++))
+  fi
+done
+
+/bin/gzip -9 $downloadpath/$csvFile
+echo -e "<a href='../../download/'><b>Go To Download Area</b></a>"
+}
+mode10(){
+#/bin/rm -f ../../download/*.csv
+/bin/rm -f ../../download/*.csv.gz
+echo -e "<a href='../../download/'><b>Go To Download Area</b></a>"
+}
+
+mode11(){
+allData=$(/usr/bin/mysql -s -N $dblogin -e "select * from DEC_INPUT_TB ORDER BY ID DESC LIMIT 100;")
+lastcolumn=18 #last col -1 (20:30:50 10/10/2015 are two columns)
+
+goBack
+echo -e "<table border=1 style='width:100%'>"
+echo -e "<tr bgcolor='grey'><td>ID</td><td>Client</td><td>D1</td><td>D2</td><td>D3</td><td>D4</td><td>D5</td><td>D6</td><td>D7</td>\
+<td>D8</td><td>D9</td><td>D10</td><td>D11</td><td>D12</td><td>Rec Date</td><td>Rec Time</td><td>Upl Date</td>\
+<td>Upl Time</td><td>OK</td></tr>"
+
+counter=0 #First col
+for Data in $allData; do
+  if [[ $counter -gt $lastcolumn ]]; then
+    #echo "<tr><td align='center'>${MY[*]}</td></tr>"|sed "s% %   %g"
+    echo "\
+<tr><td>${MY[0]}</td><td><b>${MY[1]}</b></td><td>${MY[2]}</td><td>${MY[3]}</td><td>${MY[4]}</td><td>${MY[5]}</td>\
+<td>${MY[6]}</td><td>${MY[7]}</td><td>${MY[8]}</td><td>${MY[9]}</td><td>${MY[10]}</td><td>${MY[11]}</td>\
+<td>${MY[12]}</td><td>${MY[13]}</td><td>${MY[14]}</td><td>${MY[15]}</td><td>${MY[16]}</td>\
+<td>${MY[17]}</td><td>${MY[18]}</td></tr>"
+    counter=0
+    #unset MY
+    MY[$counter]="$Data"
+    ((counter++))
+  else
+    MY[$counter]="$Data"
+    ((counter++))
+  fi
+done
+echo -e "</table>"
+goBack
+}
+
+query_fun(){
+case $value1 in
+  1) #select CLIID from DEC_INPUT_TB group by CLIID;
+     mode1
+  ;;
+  2) #select CLIID from DEC_INPUT_TB where UPLOADED='n' group by CLIID;
+     mode2
+  ;;
+  3) #select * from DEC_INPUT_TB where UPLOADED='n' ORDER BY ID DESC LIMIT 50;
+     mode3
+  ;;
+  4) #select * from SLOW_UPLOADS order by ID DESC LIMIT 50;
+     mode4
+  ;;
+  11) #select * from DEC_INPUT_TB where UPLOADED='n' ORDER BY ID DESC LIMIT 50;
+     mode11
+  ;;
+  *) echo "$(date) STATISTICS mysql called with some error on value1 $value1" >> /var/www/html/ownpan/logs_/log.txt
+  ;;
+esac
+}
+
+dump_fun(){
+case $value1 in
+  5) #dump --all-dbs ALL
+     mode5
+  ;;
+  6) #dump current active tables
+     mode6
+  ;;
+  7) #delete all dumps
+     mode7
+  ;;
+  *) echo "$(date) STATISTICS mysql called with some error on value1 $value1" >> /var/www/html/ownpan/logs_/log.txt
+  ;;
+esac
+}
+
+export_fun(){
+case $value1 in
+  8) #export --all-dbs ALL
+     mode8
+  ;;
+  9) #export current active tables
+     mode9
+  ;;
+  10)#delete all exports
+     mode10
+  ;;
+  *) echo "$(date) STATISTICS mysql called with some error on value1 $value1" >> /var/www/html/ownpan/logs_/log.txt
+  ;;
+esac
+}
+
+if [[ ! $command ]]; then
+  echo "$(date) STATISTICS mysql called with no options.." >> /var/www/html/ownpan/logs_/log.txt
+  exit
+else
+  echo "$(date) STATISTICS DEBUGB - command = $command , value1 = $value1" >> /var/www/html/ownpan/logs_/log.txt
+  case $command in
+    query) query_fun
+    ;;
+    dump) dump_fun
+    ;;
+    export) export_fun
+    ;;
+  esac
+fi
+

@@ -1,0 +1,21 @@
+#!/bin/bash
+
+command=$1
+
+#if [[ ! $command ]]; then
+myStatus=$(/usr/bin/sudo /etc/init.d/apache2 status | grep running)
+
+#  if [[ $(echo $myStatus|grep stop|wc -l) -eq 1 ]]; then
+#    echo -e "<pre><font color="red">$myStatus</font></pre>"
+#  else
+    echo -e "<pre><font color="blue">$myStatus</font></pre>"
+#  fi
+#  exit
+#fi
+#echo "$(date)MANAGE Httpd Issued $command" >> /var/www/html/ownpan/logs_/log.txt
+#case $command in
+#  reload) /usr/bin/sudo /etc/init.d/apache2 reload
+#  ;;
+#esac
+
+

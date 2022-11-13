@@ -1,0 +1,3 @@
+#!/bin/bash
+
+echo -e "<pre>$(/usr/bin/uptime)</pre>"

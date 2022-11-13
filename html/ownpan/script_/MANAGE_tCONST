@@ -1,0 +1,21 @@
+#!/bin/bash
+
+command=$1
+value1=$2
+
+fileName=/srv/data/tCONST
+
+case $command in
+  change)  if [[ $value1 -gt 0 ]]; then
+		echo -e "$value1" > /srv/data/tCONST #$filename
+	else
+		echo -e "60" > /srv/data/tCONST #$filename
+	fi
+  ;;
+  showTCONST) if [[ ! -f $fileName ]]; then
+		  echo -e "<font color='red'>Not set</font>"
+	    else
+                  echo -e "<font color='green'>$(cat $fileName)</font>"
+            fi
+  ;;
+esac

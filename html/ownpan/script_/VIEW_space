@@ -1,0 +1,7 @@
+#!/bin/bash
+
+mySpace=$(/bin/df -hP)
+
+if [[ $mySpace ]]; then
+  echo -e "<pre>$mySpace</pre>"
+fi

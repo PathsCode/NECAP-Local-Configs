@@ -1,0 +1,126 @@
+#!/bin/bash
+
+dbconf=/var/www/html/ownpan/conf_/basic.php
+dbuser=$(/bin/grep dbuser $dbconf|cut -d= -f2|sed 's/\"//g'|sed 's/;//g')
+dbpass=$(/bin/grep dbpass $dbconf|cut -d= -f2|sed 's/\"//g'|sed 's/;//g')
+dbname=$(/bin/grep dbname $dbconf|cut -d= -f2|sed 's/\"//g'|sed 's/;//g')
+dbtbdec=$(/bin/grep dbtbdec $dbconf|cut -d= -f2|sed 's/\"//g'|sed 's/;//g')
+dbtbsta=$(/bin/grep dbtbsta $dbconf|cut -d= -f2|sed 's/\"//g'|sed 's/;//g')
+dblogin="-u$dbuser -p$dbpass $dbname"
+command=$1
+value1=$2
+myConf=/srv/data/blacklist
+
+goBack(){
+echo -e "<form action='../clients.php'>"
+echo -e "<input name='submit' type='submit' value='goBack'>"
+echo -e "</form>"
+}
+
+show_fun(){
+  goBack
+  getItems=$(cat $myConf)
+  echo -e "<table border=1 style='width:100%'><tr bgcolor='yellow'><td><b> Client NAME (ID) </b></td></tr>"
+  for item in $getItems; do
+    echo -e "<tr><td> $item </td></tr>"
+  done
+  echo -e "</table>"
+  goBack
+}
+
+reset_fun(){
+  echo > $myConf
+}
+
+add_fun(){
+  if [[ ! $(egrep -w $value1 $myConf) ]]; then
+    echo "$value1" >> $myConf
+  fi
+}
+
+del_fun(){
+  if [[ $(egrep -w $value1 $myConf) ]]; then
+    sed -i  "s/$value1//" $myConf
+  fi
+}
+
+cnt_fun(){
+  num=$(cat $myConf|egrep -v ^$ |wc -l)
+  if [[ $num -eq 0 ]]; then
+    echo "<b><font color=green> $num Listed</font></b>"
+  else
+    echo "<b><font color=red> $num Listed</font></b>"
+  fi
+}
+
+hexStats_fun(){
+query="SELECT * FROM $dbtbsta ;"
+totData=$(/usr/bin/mysql $dblogin -e "$query" |wc -l)
+
+  case $value1 in
+    E)
+      query="SELECT * FROM $dbtbsta WHERE INFO='EMPTYEND';"
+      numData=$(/usr/bin/mysql $dblogin -e "$query" |wc -l)
+      echo "TOT $numData [$(echo "scale=2; $numData/$totData*100" |bc)%]" 
+   ;;
+    M)
+      query="SELECT * FROM $dbtbsta WHERE INFO='MALFORMED';"
+      numData=$(/usr/bin/mysql $dblogin -e "$query" |wc -l)
+      echo "TOT $numData [$(echo "scale=2; $numData/$totData*100" |bc)%]"
+   ;;
+    V)
+      query="SELECT * FROM $dbtbsta WHERE INFO='ACCEPTED';"
+      numData=$(/usr/bin/mysql $dblogin -e "$query" |wc -l)
+      echo "TOT $numData [$(echo "scale=2; $numData/$totData*100" |bc)%]"
+   ;;
+    T)
+      echo "TOT $totData"
+   ;;
+  esac
+}
+
+rstStats_fun(){
+  query="DELETE FROM $dbtbsta WHERE INFO like '%';"
+  /usr/bin/mysql $dblogin -e "$query"
+}
+
+showCli_fun(){
+query="SELECT CID FROM $dbtbdec GROUP BY CID"
+cidList=$(/usr/bin/mysql $dblogin -e "$query" |grep -v CID)
+
+cnt=1
+
+goBack
+echo -e "
+<table border=1 style='width:100%'>
+<tr bgcolor='yellow'><td><b> # </b></td><td><b> Client Name (CID) </b></td></tr>"
+
+for cid in $cidList; do
+  echo -e "<tr><td>$cnt</td><td>$cid</td></tr>"
+  let cnt="$cnt +1"
+done
+echo -e "<tr bgcolor='yellow'><td><b> # </b></td><td><b> Client Name (CID) </b></td></tr>"
+echo -e "</table>"
+goBack
+}
+
+case $command in
+  1) show_fun
+  ;;
+  3) reset_fun
+  ;;
+  2) showCli_fun
+  ;;
+  4) hexStats_fun
+  ;;
+  add)  add_fun
+  ;;
+  del)  del_fun
+  ;;
+  cnt)  cnt_fun
+  ;;
+  Reset) rstStats_fun
+  ;;
+  *) echo "Command Error"
+  ;;
+esac

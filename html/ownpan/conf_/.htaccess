@@ -1,0 +1,4 @@
+<FilesMatch "basic\.cnf|function\.php|include\.php">
+  Order allow,deny
+  Deny from all
+</FilesMatch>

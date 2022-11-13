@@ -1,0 +1,21 @@
+#!/bin/bash
+
+command=$1
+value1=$2
+
+if [[ ! $command ]]; then
+myStatus=$(cat /srv/data/queue_name)
+
+  if [[ $myStatus ]]; then
+    echo -e "<font color='green'>$myStatus</font>"
+  else
+    echo -e "<font color='red'>Not set</font>"
+  fi
+  exit
+fi
+#echo "$(date)MANAGE queue change Issued $command with value $value1" >> /var/www/html/ownpan/logs_/log.txt
+
+case $command in
+  change) echo -e "$value1" >/srv/data/queue_name
+  ;;
+esac

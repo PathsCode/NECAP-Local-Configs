@@ -1,0 +1,17 @@
+#!/bin/bash
+
+proc_list=$(cat /var/www/html/ownpan/data_/Processes.cnf)
+
+if [[ ! $proc_list ]]; then
+  echo -e "<pre> Not Found </pre>"
+  exit
+fi
+
+for proc in $proc_list; do
+  procStatus=$(/bin/ps -ef|grep $proc|grep -v grep)
+  if [[ $procStatus ]]; then
+    echo -e "<pre>$procStatus </pre>"
+  else
+    echo -e "<pre>$proc Not Found</pre>"
+  fi
+done

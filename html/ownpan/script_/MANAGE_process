@@ -1,0 +1,21 @@
+#!/bin/bash
+
+command=$1
+value1=$2
+
+if [[ ! $command ]]; then
+myStatus=$(cat /var/www/html/ownpan/data_/Processes.cnf)
+
+  if [[ $myStatus ]]; then
+    echo -e "<font color='green'>$myStatus</font>"
+  else
+    echo -e "<font color='red'>Not Found</font>"
+  fi
+  exit
+fi
+#echo "$(date)MANAGE System process Issued $command with value $value1" >> /var/www/html/ownpan/logs_/log.txt
+
+case $command in
+  change) echo -e "$value1" >/var/www/html/ownpan/data_/Processes.cnf
+  ;;
+esac

@@ -1,0 +1,23 @@
+#!/bin/bash
+
+command=$1
+value1=$2
+myStatus=$(cat /etc/wvdial.conf|grep Init3|cut -d, -f3|sed s/\"//g)
+
+if [[ ! $command ]]; then
+
+  if [[ $myStatus ]]; then
+    echo -e "<font color='green'>$myStatus</font>"
+  else
+    echo -e "<font color='red'>Not set</font>"
+  fi
+  exit
+fi
+#echo "$(date)MANAGE System apn Issued $command with value $value1" >> /var/www/html/ownpan/logs_/log.txt
+
+case $command in
+  change) sed "4s/.*/Init3 = AT+CGDCONT=1,\"ip\",\"$value1\",,0,0/" /etc/wvdial.conf > /tmp/wvdial.conf
+          cat /tmp/wvdial.conf > /etc/wvdial.conf
+          rm -f /tmp/wvdial.conf
+  ;;
+esac

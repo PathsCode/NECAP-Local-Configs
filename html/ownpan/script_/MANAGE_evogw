@@ -1,0 +1,44 @@
+#!/bin/bash
+
+command=$1
+value1=$2
+ProcName1="getHexData.py"
+ProcName2="uplConvData"
+
+
+echo "$(date)MANAGE System change Issued $command with value $value1" >> /var/www/html/ownpan/logs_/log.txt
+
+case $command in
+  gwshow) myStatus=$(/bin/ps -ef|grep -v grep|grep $ProcName1|wc -l)
+        if [[ $myStatus -gt 0 ]]; then
+          echo -e "<pre><font color='green'>Gateway is UP</font></pre>"
+        else
+          echo -e "<pre><font color='red'>Gateway is DOWN</font></pre>"
+        fi
+  ;;
+  upshow) myStatus=$(/bin/ps -ef|grep -v grep|grep $ProcName2|wc -l)
+        if [[ $myStatus -gt 0 ]]; then
+          echo -e "<pre><font color='green'>Upload is running..</font></pre>"
+        else
+          echo -e "<pre><font color='red'>Upload is not running..</font></pre>"
+        fi
+  ;;
+  gwstop) pids=$(/bin/ps -ef|grep -v grep|grep $ProcName1|awk '{print $2}')
+        if [[ $pids ]];then
+          /usr/bin/sudo /bin/kill $pids
+        fi
+  ;;
+
+  upstop) pids=$(/bin/ps -ef|grep -v grep|grep $ProcName2|awk '{print $2}')
+        if [[ $pids ]];then
+          /usr/bin/sudo /bin/kill $pids
+          /bin/echo stop > /srv/tmp/.002/upload.flg
+          echo "Returned $? from write" >> /var/www/html/ownpan/logs_/log.txt
+        else
+          /bin/echo stop > /srv/tmp/.002/upload.flg
+          echo "Returned $? from write" >> /var/www/html/ownpan/logs_/log.txt
+        fi
+  ;;
+
+esac
+

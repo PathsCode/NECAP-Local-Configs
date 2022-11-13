@@ -1,0 +1,25 @@
+#!/bin/bash
+
+command=$1
+
+if [[ ! $command ]]; then
+  myDevices=$(/usr/bin/lsusb)
+
+  if [[ myDevices ]]; then
+    echo -e "<pre>$myDevices</pre>"
+  else
+    echo -e "<pre> Not Found</pre>"
+  fi
+else
+  case $command in
+    dev) myDevices=$(ls -l /dev/*|egrep "ttyUSB|ttyAMA|ttyS0")
+         if [[ $myDevices ]]; then
+           echo -e "<pre>$myDevices</pre>"
+         else
+           echo -e "<pre>Not Found</pre>"
+         fi
+    ;;
+    *) #error
+    ;;
+  esac
+fi

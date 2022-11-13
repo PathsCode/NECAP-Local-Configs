@@ -1,0 +1,30 @@
+#!/bin/bash
+
+command=$1
+value1=$2
+contList=/srv/data/osiRele
+
+add_fun(){
+  if [[ ! $(egrep -w $value1 $contList) ]]; then
+    echo  "$value1" >> $contList
+  fi
+}
+
+del_fun(){
+  if [[ $(egrep -w $value1 $contList) ]]; then
+    sed -i  "/$value1/d" $contList
+    if [[ ! -s $contList ]]; then
+      rm $contList
+    fi
+  fi
+}
+
+
+case $command in
+  add)  add_fun
+  ;;
+  del)  del_fun
+  ;;
+  *) echo "Command Error"
+  ;;
+esac

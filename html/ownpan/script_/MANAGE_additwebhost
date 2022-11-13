@@ -1,0 +1,36 @@
+#!/bin/bash
+
+command=$1
+value1=$2
+
+if [[ ! $command ]]; then
+myStatus=$(cat /srv/data/webhost2)
+
+  if [[ $myStatus ]]; then
+    echo -e "<font color='green'>$myStatus</font>"
+  else
+    echo -e "<font color='red'>Not set</font>"
+  fi
+  exit
+fi
+
+case $command in
+  change)  #Change value
+         if [[ $value1 ]]; then
+           lastchar=${value1: -1}
+           if [[ $lastchar != / ]]
+           then
+               value1=$value1/
+           fi
+           if [[ $value1 =~ http.*:\/\/.* ]]; then
+             echo -e "$value1" > /srv/data/webhost2
+           else
+             echo -e "http://$value1" > /srv/data/webhost2
+           fi
+         else
+           echo -e "" > /srv/data/webhost2
+         fi
+
+
+  ;;
+esac
