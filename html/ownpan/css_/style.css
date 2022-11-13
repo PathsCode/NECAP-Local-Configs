@@ -1,4 +1,4 @@
-@import http://fonts.googleapis.com/css?family=Raleway;
+@import url("http://fonts.googleapis.com/css?family=Raleway");
 /*----------------------------------------------
 CSS Settings For HTML Div ExactCenter
 ------------------------------------------------*/
@@ -63,7 +63,7 @@ hr {
   font-family:raleway
 }
   input[type=submit] {
-  #width:100%;
+  width:100%;
   background-color:#FFBC00;
   color:#fff;
   border:2px solid #FFCB00;
