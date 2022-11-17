@@ -2,6 +2,8 @@
 
 include('php_/login.php');
 
+include('php_/rules.php');
+
 if (isset($_SESSION['login_user'])) {
     header("location: php_/profile.php");
 }
@@ -65,16 +67,16 @@ if (file_exists("/srv/data/sysname")) {
                     </div>
                     <div class="rule-delay rule-info">
                         <span>ACCENDI RELÈ PER</span>
-                        <input placeholder="0" value="0" class="duration-value">
+                        <input placeholder="0" class="duration-value">
                         <span>SECONDI E DISATTIVALO PER</span>
-                        <input placeholder="0" value="0" class="delay-value">
+                        <input placeholder="0" class="delay-value">
                         <span>SECONDI</span>
                     </div>
                     <div class="rule-time rule-info">
                         <span>La Regola è in funzione dalle</span>
-                        <input placeholder="HH:MM" value="00:00" class="start-time time-selection">
+                        <input placeholder="00:00" class="start-time time-selection">
                         <span>alle</span>
-                        <input placeholder="HH:MM" value="23:59" class="end-time time-selection">
+                        <input placeholder="23:59" class="end-time time-selection">
                     </div>
                 </div>
             <?php endfor; ?>
