@@ -57,10 +57,12 @@
                 // Save Config
                 $config = "threshold\n$osinode\n$port\n$comparator\n$value\n$duration\n$delay";
                 
-                shell_exec("rm " . RULES_DIR . $OSIRELE . "." . $i);   // echo "rm " . RULES_DIR . $OSIRELE . "." . $i; echo "<br/>";
+                if (file_exists(RULES_DIR . $OSIRELE . "." . $i)) {
+                    shell_exec("rm " . RULES_DIR . $OSIRELE . "." . $i);   // echo "rm " . RULES_DIR . $OSIRELE . "." . $i; echo "<br/>";
+                }
                 shell_exec("echo \"" . $config . "\" > " . RULES_DIR . $OSIRELE . "." . $i);   // echo "echo " . $config . " > " . RULES_DIR . $OSIRELE . "." . $i; echo "<br/><br/>";
 
-                // Save Time 
+                // Get Time Data && Save Time Config
                 if ((!empty($releData[START_TIME]) && preg_match("/[0-2][0-9]\:[0-5][0-9]/", $releData[START_TIME])) && (!empty($releData[END_TIME]) && preg_match("/[0-2][0-9]\:[0-5][0-9]/", $releData[END_TIME]))) {
                     
                     $startTime = $releData[START_TIME];
@@ -68,29 +70,34 @@
 
                     $timeConfig = "$startTime\n$endTime";
 
-                    shell_exec("rm " . RULES_DIR . TIMERANGE . "." . $i);   // echo "rm " . RULES_DIR . TIMERANGE . "." . $i; echo "<br/>";                      
+                    if (file_exists(RULES_DIR . TIMERANGE . "." . $i)) {
+                        shell_exec("rm " . RULES_DIR . TIMERANGE . "." . $i);   // echo "rm " . RULES_DIR . TIMERANGE . "." . $i; echo "<br/>";                      
+                    }
                     shell_exec("echo \"" . $timeConfig . "\" > " . RULES_DIR . TIMERANGE . "." . $i);   // echo "echo " . $timeConfig . " > " . RULES_DIR . TIMERANGE . "." . $i; echo "<br/><br/>";
 
                 }
             
             } else {
 
-                // Delete Config / Time
+                // Delete Config 
+                if (file_exists(RULES_DIR . $OSIRELE . "." . $i)) {
+                    shell_exec("rm " . RULES_DIR . $OSIRELE . "." . $i);
+                }
+
+                // Delete Time Config
+                if (file_exists(RULES_DIR . TIMERANGE . "." . $i)) {
+                    shell_exec("rm " . RULES_DIR . TIMERANGE . "." . $i);                     
+                }
 
             }
 
             // Redirect
-            // header("Location: /");
+            header("Location: /");
 
         }
 
     }
 
-    // SHOW TIME
-    //  TIME CHECK
-    //  SAVE TIME
-    //  DELETE TIME if exists
-    // DELETE CONF / TIME if exists
     // CONNECTION TO DB WITH NEW USER
     // SENSOR = OSINODE : PORT 
     // UNIT
