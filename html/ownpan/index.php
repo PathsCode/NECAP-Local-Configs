@@ -48,7 +48,7 @@ if (file_exists("/srv/data/sysname")) {
         </div>
         <h1 class="rules-title">Regole</h1>
         <form action="php_/rules.php" method="post" class="reles">
-            <?php for ($releId = 1; $releId <= 8; $releId ++) : ?>
+            <?php for ($releId = 1; $releId <= RELE_NUM; $releId ++) : ?>
                 <div class="rele">
                     <div class="rele-title flex">
                         <h2>RELÈ <?= $releId; ?></h2>
@@ -56,20 +56,19 @@ if (file_exists("/srv/data/sysname")) {
                     </div>
                     <div class="rule-main rule-info">
                         <span>SE</span>
-                        <input placeholder="Sensore" class="sensor-input">
-                        <select class="select-comparison">
+                        <input name="<?= "rele[" . $releId . "][sensor]" ?>" type="text" placeholder="Sensore" class="sensor-input">
+                        <select name="<?= "rele[" . $releId . "][comparator]" ?>" class="select-comparison">
                             <option><</option>
-                            <option>=</option>
                             <option>></option>
                         </select>
-                        <input placeholder="Valore" class="sensor-value">
+                        <input name="<?= "rele[" . $releId . "][value]" ?>" type="number" placeholder="Valore" class="sensor-value">
                         <span class="unit"></span>
                     </div>
                     <div class="rule-delay rule-info">
                         <span>ACCENDI RELÈ PER</span>
-                        <input placeholder="0" class="duration-value">
+                        <input name="<?= "rele[" . $releId . "][duration]" ?>" type="number" placeholder="0" min=0 class="duration-value">
                         <span>SECONDI E DISATTIVALO PER</span>
-                        <input placeholder="0" class="delay-value">
+                        <input name="<?= "rele[" . $releId . "][delay]" ?>" type="number" placeholder="0" min=0 class="delay-value">
                         <span>SECONDI</span>
                     </div>
                     <div class="rule-time rule-info">
