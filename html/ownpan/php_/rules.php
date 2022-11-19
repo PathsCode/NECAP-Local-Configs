@@ -10,7 +10,11 @@
     const DURATION = 'duration';
     const DELAY = 'delay';
 
+    const START_TIME = 'startTime';
+    const END_TIME = 'endTime';
+
     const RULES_DIR = '/srv/data/';
+    const TIMERANGE = 'timeRange';
 
     const MINOR_THAN = 'lt';
     const MAJOR_THAN = 'gt';
@@ -52,19 +56,31 @@
 
                 // Save Config
                 $config = "threshold\n$osinode\n$port\n$comparator\n$value\n$duration\n$delay";
-                echo "rm " . RULES_DIR . $OSIRELE . "." . $i; echo "<br/>";
-                echo "echo " . $config . " > " . RULES_DIR . $OSIRELE . "." . $i; echo "<br/><br/>";
                 
-                shell_exec("rm " . RULES_DIR . $OSIRELE . "." . $i);
-                shell_exec("echo \"" . $config . "\" > " . RULES_DIR . $OSIRELE . "." . $i);   
+                shell_exec("rm " . RULES_DIR . $OSIRELE . "." . $i);   // echo "rm " . RULES_DIR . $OSIRELE . "." . $i; echo "<br/>";
+                shell_exec("echo \"" . $config . "\" > " . RULES_DIR . $OSIRELE . "." . $i);   // echo "echo " . $config . " > " . RULES_DIR . $OSIRELE . "." . $i; echo "<br/><br/>";
 
-                // Save Time (Other Check)
+                // Save Time 
+                if ((!empty($releData[START_TIME]) && preg_match("/[0-2][0-9]\:[0-5][0-9]/", $releData[START_TIME])) && (!empty($releData[END_TIME]) && preg_match("/[0-2][0-9]\:[0-5][0-9]/", $releData[END_TIME]))) {
+                    
+                    $startTime = $releData[START_TIME];
+                    $endTime = $releData[END_TIME];
+
+                    $timeConfig = "$startTime\n$endTime";
+
+                    shell_exec("rm " . RULES_DIR . TIMERANGE . "." . $i);   // echo "rm " . RULES_DIR . TIMERANGE . "." . $i; echo "<br/>";                      
+                    shell_exec("echo \"" . $timeConfig . "\" > " . RULES_DIR . TIMERANGE . "." . $i);   // echo "echo " . $timeConfig . " > " . RULES_DIR . TIMERANGE . "." . $i; echo "<br/><br/>";
+
+                }
             
             } else {
 
                 // Delete Config / Time
 
             }
+
+            // Redirect
+            // header("Location: /");
 
         }
 
@@ -76,7 +92,7 @@
     //  DELETE TIME if exists
     // DELETE CONF / TIME if exists
     // CONNECTION TO DB WITH NEW USER
-    // SENSOR = OSINODE / PORT 
+    // SENSOR = OSINODE : PORT 
     // UNIT
     // VALUE RAW FROM TRUE 
     // REDIRECT

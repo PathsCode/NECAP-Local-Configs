@@ -76,6 +76,15 @@ if (file_exists("/srv/data/sysname")) {
                     } else {
                         $releSensor = $releComparator = $releValue = $releDuration = $releDelay = "";
                     }
+
+                    $releTimeFile = RULES_DIR . TIMERANGE . "." . $releId;
+                    if (file_exists($releTimeFile)) {
+                        $releTimeContent = explode("\n", shell_exec("cat " . $releTimeFile));
+                        $releStart = rtrim($releTimeContent[0]);
+                        $releEnd = rtrim($releTimeContent[1]);
+                    } else {
+                        $releStart = $releEnd = "";
+                    }
                 ?>
 
                 <div class="rele" id="<?= "rele" . $releId ?>">
@@ -102,9 +111,9 @@ if (file_exists("/srv/data/sysname")) {
                     </div>
                     <div class="rule-time rule-info">
                         <span>La Regola è in funzione dalle</span>
-                        <input placeholder="00:00" class="start-time time-selection">
+                        <input name="<?= "rele[" . $releId . "][startTime]" ?>" type="time" value="<?= $releStart ?>" placeholder="00:00" class="start-time time-selection">
                         <span>alle</span>
-                        <input placeholder="23:59" class="end-time time-selection">
+                        <input name="<?= "rele[" . $releId . "][endTime]" ?>" type="time" value="<?= $releEnd ?>" placeholder="23:59" class="end-time time-selection">
                     </div>
                 </div>
             <?php endfor; ?>
