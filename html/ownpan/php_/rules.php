@@ -2,6 +2,7 @@
 
     // CONSTS
     const RELE_NUM = 8;
+
     const RELE = 'rele';
     const SENSOR = 'sensor';
     const COMPARATOR = 'comparator';
@@ -10,6 +11,9 @@
     const DELAY = 'delay';
 
     const RULES_DIR = '/srv/data/';
+
+    const MINOR_THAN = 'lt';
+    const MAJOR_THAN = 'gt';
 
     $OSIRELE = rtrim(shell_exec("cat " . RULES_DIR . "osiRele"));
     if ($OSIRELE == null) exit();
@@ -38,9 +42,9 @@
 
                 switch ($comparator) {
                     case "<":
-                        $comparator = "lt"; break;
+                        $comparator = MINOR_THAN; break;
                     case ">":
-                        $comparator = "gt"; break;
+                        $comparator = MAJOR_THAN; break;
                     default:
                         $comparator = null; break;
                 }
@@ -49,10 +53,8 @@
 
                 // Save Config
                 $config = "threshold\n$osinode\n$port\n$comparator\n$value\n$duration\n$delay";
-                echo "echo " . $config . " > " . RULES_DIR . $OSIRELE . "halo";
-
-                exit();
-                shell_exec("echo \"" . $config . "\" > " . RULES_DIR . $OSIRELE . "halo");
+                echo "echo " . $config . " > " . RULES_DIR . $OSIRELE . "." . $i; echo "<br/><br/>";
+                shell_exec("echo \"" . $config . "\" > " . RULES_DIR . $OSIRELE . "." . $i);   
 
                 // Save Time (Other Check)
             
@@ -66,7 +68,7 @@
 
     }
 
-    // SAVE CONF
+    // SHOW TIME
     //  TIME CHECK
     //  SAVE TIME
     //  DELETE TIME if exists
