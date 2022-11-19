@@ -31,9 +31,8 @@
 
             if (!empty($releData[SENSOR]) && preg_match("/[A-Za-z0-9]+:[A-Za-z0-9]+/", $releData[SENSOR]) && !empty($releData[VALUE]) && is_numeric($releData[VALUE])) {
             
-                /* TEMP */ echo $i . " "; print_r($releData); echo "<br/>";
-
                 // Get Data
+                // echo $i . " "; print_r($releData); echo "<br/>";
                 list($osinode, $port) = explode(":", $releData[SENSOR]);
                 $comparator = isset($releData[COMPARATOR]) ? $releData[COMPARATOR] : '';
                 $value = $releData[VALUE];
@@ -53,7 +52,10 @@
 
                 // Save Config
                 $config = "threshold\n$osinode\n$port\n$comparator\n$value\n$duration\n$delay";
+                echo "rm " . RULES_DIR . $OSIRELE . "." . $i; echo "<br/>";
                 echo "echo " . $config . " > " . RULES_DIR . $OSIRELE . "." . $i; echo "<br/><br/>";
+                
+                shell_exec("rm " . RULES_DIR . $OSIRELE . "." . $i);
                 shell_exec("echo \"" . $config . "\" > " . RULES_DIR . $OSIRELE . "." . $i);   
 
                 // Save Time (Other Check)
@@ -77,4 +79,4 @@
     // SENSOR = OSINODE / PORT 
     // UNIT
     // VALUE RAW FROM TRUE 
-    // OsiRELE
+    // REDIRECT
