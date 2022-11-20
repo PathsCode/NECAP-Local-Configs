@@ -145,9 +145,3 @@
             }
         }
     }
-
-    // OsiNODE CHANGE CHANGES PORTS LIST
-    // SENSOR = OSINODE : PORT 
-    // UNIT
-    // VALUE RAW FROM TRUE 
-    // REDIRECT

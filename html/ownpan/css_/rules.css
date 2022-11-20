@@ -217,13 +217,13 @@ button {
     margin-left: 15px;
 }
 
-.osinode-port-separator {
+.osinode-port-separator, .unit {
     margin-left: 15px;
 }
 
 .sensor-value {
     width: 150px;
-    margin: 0 15px;
+    margin-left: 15px;
 }
 
 .duration-value, .delay-value {

@@ -24,6 +24,7 @@ if (file_exists("/srv/data/sysname")) {
         rele.getElementsByClassName('sensor-input')[0].value = null;
         rele.getElementsByClassName('select-comparison')[0].selectedIndex = 0;
         rele.getElementsByClassName('sensor-value')[0].value = null;
+        rele.getElementsByClassName('unit')[0].innerText = '';
         rele.getElementsByClassName('duration-value')[0].value = null;
         rele.getElementsByClassName('delay-value')[0].value = null;
         rele.getElementsByClassName('start-time')[0].value = null;
@@ -33,14 +34,27 @@ if (file_exists("/srv/data/sysname")) {
     function onOsinodeChange(osinodeInputEl, id) {
         rele = osinodeInputEl.parentNode;
         portSelect = rele.getElementsByClassName('port-selection')[0];
+        unitInfo = rele.getElementsByClassName('unit')[0];
 
-        portSelect.innerHTML = '<select name="rele' + id + '"][port]" ?>" class="select-comparison port-selection">';
-
+        portSelect.innerHTML = '<select name="rele' + id + '"][port]" class="select-comparison port-selection" >';
         osinodes[osinodeInputEl.value].forEach(possibleData => {
             portSelect.innerHTML += '<option value="' + possibleData[PORT_ID] + '">' + possibleData[PARAM] + ' (' + possibleData[PORT_ID] + ')</option>';
         });
-
         portSelect.innerHTML += '</select>';
+
+        portSelect.attributes.onchange.nodeValue = "onPortChange(this, '" + osinodeInputEl.value + "')";
+        unitInfo.innerText = osinodes[osinodeInputEl.value][0][UNIT];
+    }
+
+    function onPortChange(portInputEl, osinodeName) {
+        rele = portInputEl.parentNode;
+        unitInfo = rele.getElementsByClassName('unit')[0];
+
+        osinodes[osinodeName].forEach(possibleData => {
+            if (possibleData[PORT_ID] == portInputEl.value) {
+                unitInfo.innerText = possibleData[UNIT];
+            }
+        });
     }
 
     osinodes = <?= json_encode($osinodes) ?>;
@@ -48,6 +62,7 @@ if (file_exists("/srv/data/sysname")) {
 
     PORT_ID = 'portId';
     PARAM = 'param';
+    UNIT = 'unit';
 </script>
 
 <!DOCTYPE html>
@@ -127,7 +142,7 @@ if (file_exists("/srv/data/sysname")) {
                                 <?php endforeach; ?>
                             </select>
                             <span class="osinode-port-separator">:</span>
-                            <select name="<?= "rele[" . $releId . "][port]" ?>" class="select-comparison port-selection">
+                            <select name="<?= "rele[" . $releId . "][port]" ?>" class="select-comparison port-selection" onchange="onPortChange(this, '<?= ($releOsinode && in_array($releOsinode, $osinodesNames)) ? $releOsinode : '' ?>')">
                                 <?php if ($releOsinode && in_array($releOsinode, $osinodesNames)) : ?>
                                     <?php foreach ($osinodes[$releOsinode] as $possibleData) : ?>
                                         <option <?= $relePort == $possibleData[PORT_ID] ? 'selected' : '' ?> value="<?= $possibleData[PORT_ID]?>"><?= $possibleData[PARAM] ?> (<?= $possibleData[PORT_ID] ?>)</option>
