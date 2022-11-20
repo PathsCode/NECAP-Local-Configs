@@ -20,7 +20,10 @@
     const MAJOR_THAN = 'gt';
 
     $OSIRELE = rtrim(shell_exec("cat " . RULES_DIR . "osiRele"));
-    if ($OSIRELE == null) exit();
+    if ($OSIRELE == null) {
+        shell_exec("echo \"RE0000\" > " . RULES_DIR . "osiRele");
+        $OSIRELE = rtrim(shell_exec("cat " . RULES_DIR . "osiRele"));
+    }
 
     // Basic Rules Stuff
 
