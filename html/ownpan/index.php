@@ -61,63 +61,73 @@ if (file_exists("/srv/data/sysname")) {
         </div>
         <h1 class="rules-title">Regole</h1>
         <form action="php_/rules.php" method="post" class="reles">
-            <?php for ($releId = 1; $releId <= RELE_NUM; $releId ++) : ?>
-                <?php 
-                    $releFile = RULES_DIR . $OSIRELE . "." . $releId;
-                    if (file_exists($releFile)) {
-                        $releContent = explode("\n", shell_exec("cat " . $releFile));
-                        $releOsinode = $releContent[1];
-                        $relePort = $releContent[2];
-                        $releSensor = $releOsinode . ":" . $relePort;
-                        $releComparator = $releContent[3]; /* */
-                        $releValue = $releContent[4]; /* */
-                        $releDuration = $releContent[5]; 
-                        $releDelay = $releContent[6]; 
-                    } else {
-                        $releSensor = $releComparator = $releValue = $releDuration = $releDelay = "";
-                    }
+            <div class="rele user-select <?= $user ? '' : 'no-user-selected' ?>" id="user-select">
+                <span>Utente: </span>
+                <input name="ownerEmail" type="text" placeholder="Email NECAP">
+                <button type="submit" class="enter" name="SelezionaUtente">
+                    <img src="/css_/check.png">
+                </button>
+            </div>
+            
+            <?php if ($user) : ?>
+                <?php for ($releId = 1; $releId <= RELE_NUM; $releId ++) : ?>
+                    <?php 
+                        $releFile = RULES_DIR . $OSIRELE . "." . $releId;
+                        if (file_exists($releFile)) {
+                            $releContent = explode("\n", shell_exec("cat " . $releFile));
+                            $releOsinode = $releContent[1];
+                            $relePort = $releContent[2];
+                            $releSensor = $releOsinode . ":" . $relePort;
+                            $releComparator = $releContent[3]; /* */
+                            $releValue = $releContent[4]; /* */
+                            $releDuration = $releContent[5]; 
+                            $releDelay = $releContent[6]; 
+                        } else {
+                            $releSensor = $releComparator = $releValue = $releDuration = $releDelay = "";
+                        }
 
-                    $releTimeFile = RULES_DIR . TIMERANGE . "." . $releId;
-                    if (file_exists($releTimeFile)) {
-                        $releTimeContent = explode("\n", shell_exec("cat " . $releTimeFile));
-                        $releStart = rtrim($releTimeContent[0]);
-                        $releEnd = rtrim($releTimeContent[1]);
-                    } else {
-                        $releStart = $releEnd = "";
-                    }
-                ?>
+                        $releTimeFile = RULES_DIR . TIMERANGE . "." . $releId;
+                        if (file_exists($releTimeFile)) {
+                            $releTimeContent = explode("\n", shell_exec("cat " . $releTimeFile));
+                            $releStart = rtrim($releTimeContent[0]);
+                            $releEnd = rtrim($releTimeContent[1]);
+                        } else {
+                            $releStart = $releEnd = "";
+                        }
+                    ?>
 
-                <div class="rele" id="<?= "rele" . $releId ?>">
-                    <div class="rele-title flex">
-                        <h2>RELÈ <?= $releId; ?></h2>
-                        <img src="/css_/x-png-33.png" class="delete-rule cursor" onclick="emptyRule(<?= $releId ?>)"/>
+                    <div class="rele" id="<?= "rele" . $releId ?>">
+                        <div class="rele-title flex">
+                            <h2>RELÈ <?= $releId; ?></h2>
+                            <img src="/css_/x-png-33.png" class="delete-rule cursor" onclick="emptyRule(<?= $releId ?>)"/>
+                        </div>
+                        <div class="rule-main rule-info">
+                            <span>SE</span>
+                            <input name="<?= "rele[" . $releId . "][sensor]" ?>" type="text" value="<?= $releSensor ?>" placeholder="Sensore" class="sensor-input">
+                            <select name="<?= "rele[" . $releId . "][comparator]" ?>" class="select-comparison">
+                                <option <?= $releComparator == MINOR_THAN ? 'selected' : '' ?>><</option>
+                                <option <?= $releComparator == MAJOR_THAN ? 'selected' : '' ?>>></option>
+                            </select>
+                            <input name="<?= "rele[" . $releId . "][value]" ?>" type="number" value="<?= $releValue ?>" placeholder="Valore" class="sensor-value">
+                            <span class="unit"></span>
+                        </div>
+                        <div class="rule-delay rule-info">
+                            <span>ACCENDI RELÈ PER</span>
+                            <input name="<?= "rele[" . $releId . "][duration]" ?>" type="number" value="<?= $releDuration ?>" placeholder="0" min=0 class="duration-value">
+                            <span>SECONDI E DISATTIVALO PER</span>
+                            <input name="<?= "rele[" . $releId . "][delay]" ?>" type="number" value="<?= $releDelay ?>" placeholder="0" min=0 class="delay-value">
+                            <span>SECONDI</span>
+                        </div>
+                        <div class="rule-time rule-info">
+                            <span>La Regola è in funzione dalle</span>
+                            <input name="<?= "rele[" . $releId . "][startTime]" ?>" type="time" value="<?= $releStart ?>" placeholder="00:00" class="start-time time-selection">
+                            <span>alle</span>
+                            <input name="<?= "rele[" . $releId . "][endTime]" ?>" type="time" value="<?= $releEnd ?>" placeholder="23:59" class="end-time time-selection">
+                        </div>
                     </div>
-                    <div class="rule-main rule-info">
-                        <span>SE</span>
-                        <input name="<?= "rele[" . $releId . "][sensor]" ?>" type="text" value="<?= $releSensor ?>" placeholder="Sensore" class="sensor-input">
-                        <select name="<?= "rele[" . $releId . "][comparator]" ?>" class="select-comparison">
-                            <option <?= $releComparator == MINOR_THAN ? 'selected' : '' ?>><</option>
-                            <option <?= $releComparator == MAJOR_THAN ? 'selected' : '' ?>>></option>
-                        </select>
-                        <input name="<?= "rele[" . $releId . "][value]" ?>" type="number" value="<?= $releValue ?>" placeholder="Valore" class="sensor-value">
-                        <span class="unit"></span>
-                    </div>
-                    <div class="rule-delay rule-info">
-                        <span>ACCENDI RELÈ PER</span>
-                        <input name="<?= "rele[" . $releId . "][duration]" ?>" type="number" value="<?= $releDuration ?>" placeholder="0" min=0 class="duration-value">
-                        <span>SECONDI E DISATTIVALO PER</span>
-                        <input name="<?= "rele[" . $releId . "][delay]" ?>" type="number" value="<?= $releDelay ?>" placeholder="0" min=0 class="delay-value">
-                        <span>SECONDI</span>
-                    </div>
-                    <div class="rule-time rule-info">
-                        <span>La Regola è in funzione dalle</span>
-                        <input name="<?= "rele[" . $releId . "][startTime]" ?>" type="time" value="<?= $releStart ?>" placeholder="00:00" class="start-time time-selection">
-                        <span>alle</span>
-                        <input name="<?= "rele[" . $releId . "][endTime]" ?>" type="time" value="<?= $releEnd ?>" placeholder="23:59" class="end-time time-selection">
-                    </div>
-                </div>
-            <?php endfor; ?>
-            <input type="submit" name="Salva" value="Salva Modifiche" class="confirm-button update-rules cursor">
+                <?php endfor; ?>
+                <input type="submit" name="Salva" value="Salva Modifiche" class="confirm-button update-rules cursor">
+            <?php endif; ?>
         </form>
     </body>
 
