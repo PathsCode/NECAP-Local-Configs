@@ -21,7 +21,8 @@ if (file_exists("/srv/data/sysname")) {
 <script>
     function emptyRule(id) {
         rele = document.getElementById('rele' + id);
-        rele.getElementsByClassName('sensor-input')[0].value = null;
+        rele.getElementsByClassName('osinode-selection')[0].selectedIndex = 0;
+        rele.getElementsByClassName('port-selection')[0].selectedIndex = 0;
         rele.getElementsByClassName('select-comparison')[0].selectedIndex = 0;
         rele.getElementsByClassName('sensor-value')[0].value = null;
         rele.getElementsByClassName('unit')[0].innerText = '';
@@ -136,7 +137,7 @@ if (file_exists("/srv/data/sysname")) {
                         </div>
                         <div class="rule-main rule-info">
                             <span>SE</span>
-                            <select name="<?= "rele[" . $releId . "][osinode]" ?>" class="select-comparison" onchange="onOsinodeChange(this, <?= $releId ?>)">
+                            <select name="<?= "rele[" . $releId . "][osinode]" ?>" class="select-comparison osinode-selection" onchange="onOsinodeChange(this, <?= $releId ?>)">
                                 <?php foreach ($osinodes as $osinodeId => $singleData) : ?>
                                     <option <?= $releOsinode == $osinodeId ? 'selected' : '' ?>><?= $osinodeId ?></option>
                                 <?php endforeach; ?>
