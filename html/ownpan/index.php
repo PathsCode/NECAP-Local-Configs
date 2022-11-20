@@ -29,6 +29,25 @@ if (file_exists("/srv/data/sysname")) {
         rele.getElementsByClassName('start-time')[0].value = null;
         rele.getElementsByClassName('end-time')[0].value = null;
     }
+
+    function onOsinodeChange(osinodeInputEl, id) {
+        rele = osinodeInputEl.parentNode;
+        portSelect = rele.getElementsByClassName('port-selection')[0];
+
+        portSelect.innerHTML = '<select name="rele' + id + '"][port]" ?>" class="select-comparison port-selection">';
+
+        osinodes[osinodeInputEl.value].forEach(possibleData => {
+            portSelect.innerHTML += '<option value="' + possibleData[PORT_ID] + '">' + possibleData[PARAM] + ' (' + possibleData[PORT_ID] + ')</option>';
+        });
+
+        portSelect.innerHTML += '</select>';
+    }
+
+    osinodes = <?= json_encode($osinodes) ?>;
+    osinodesNames = <?= json_encode($osinodesNames) ?>;
+
+    PORT_ID = 'portId';
+    PARAM = 'param';
 </script>
 
 <!DOCTYPE html>
@@ -61,15 +80,15 @@ if (file_exists("/srv/data/sysname")) {
         </div>
         <h1 class="rules-title">Regole</h1>
         <form action="php_/rules.php" method="post" class="reles">
-            <div class="rele user-select <?= $user ? '' : 'no-user-selected' ?>" id="user-select">
+            <div class="rele user-select <?= $allData ? '' : 'no-user-selected' ?>" id="user-select">
                 <span>Utente: </span>
-                <input name="ownerEmail" type="text" placeholder="Email NECAP">
+                <input name="ownerEmail" type="text" value="<?= $userEmail ?>" placeholder="Email NECAP">
                 <button type="submit" class="enter" name="SelezionaUtente">
                     <img src="/css_/check.png">
                 </button>
             </div>
             
-            <?php if ($user) : ?>
+            <?php if ($allData) : ?>
                 <?php for ($releId = 1; $releId <= RELE_NUM; $releId ++) : ?>
                     <?php 
                         $releFile = RULES_DIR . $OSIRELE . "." . $releId;
@@ -77,13 +96,12 @@ if (file_exists("/srv/data/sysname")) {
                             $releContent = explode("\n", shell_exec("cat " . $releFile));
                             $releOsinode = $releContent[1];
                             $relePort = $releContent[2];
-                            $releSensor = $releOsinode . ":" . $relePort;
                             $releComparator = $releContent[3]; /* */
                             $releValue = $releContent[4]; /* */
                             $releDuration = $releContent[5]; 
                             $releDelay = $releContent[6]; 
                         } else {
-                            $releSensor = $releComparator = $releValue = $releDuration = $releDelay = "";
+                            $releOsinode = $relePort = $releComparator = $releValue = $releDuration = $releDelay = "";
                         }
 
                         $releTimeFile = RULES_DIR . TIMERANGE . "." . $releId;
@@ -103,7 +121,19 @@ if (file_exists("/srv/data/sysname")) {
                         </div>
                         <div class="rule-main rule-info">
                             <span>SE</span>
-                            <input name="<?= "rele[" . $releId . "][sensor]" ?>" type="text" value="<?= $releSensor ?>" placeholder="Sensore" class="sensor-input">
+                            <select name="<?= "rele[" . $releId . "][osinode]" ?>" class="select-comparison" onchange="onOsinodeChange(this, <?= $releId ?>)">
+                                <?php foreach ($osinodes as $osinodeId => $singleData) : ?>
+                                    <option <?= $releOsinode == $osinodeId ? 'selected' : '' ?>><?= $osinodeId ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                            <span class="osinode-port-separator">:</span>
+                            <select name="<?= "rele[" . $releId . "][port]" ?>" class="select-comparison port-selection">
+                                <?php if ($releOsinode && in_array($releOsinode, $osinodesNames)) : ?>
+                                    <?php foreach ($osinodes[$releOsinode] as $possibleData) : ?>
+                                        <option <?= $relePort == $possibleData[PORT_ID] ? 'selected' : '' ?> value="<?= $possibleData[PORT_ID]?>"><?= $possibleData[PARAM] ?> (<?= $possibleData[PORT_ID] ?>)</option>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </select>
                             <select name="<?= "rele[" . $releId . "][comparator]" ?>" class="select-comparison">
                                 <option <?= $releComparator == MINOR_THAN ? 'selected' : '' ?>><</option>
                                 <option <?= $releComparator == MAJOR_THAN ? 'selected' : '' ?>>></option>

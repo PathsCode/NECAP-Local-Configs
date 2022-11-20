@@ -1,10 +1,14 @@
 <?php
 
+    /* TEMP */ ini_set('display_errors', 1);
+
     // CONSTS
     const RELE_NUM = 8;
 
     const RELE = 'rele';
     const SENSOR = 'sensor';
+    const OSINODE = 'osinode';
+    const PORT = 'port';
     const COMPARATOR = 'comparator';
     const VALUE = 'value'; 
     const DURATION = 'duration';
@@ -18,6 +22,11 @@
 
     const MINOR_THAN = 'lt';
     const MAJOR_THAN = 'gt';
+
+    const ID = 'id';
+    const OSINODE_ID = 'osinodeId';
+    const PORT_ID = 'portId';
+    const PARAM = 'param';
 
     // Select User Email
     if (isset($_POST['SelezionaUtente'])) {
@@ -35,10 +44,6 @@
         $OSIRELE = rtrim(shell_exec("cat " . RULES_DIR . "osiRele"));
     }
 
-    // Get User Email
-    $userEmail = rtrim(shell_exec("cat " . RULES_DIR . "ownerEmail"));
-    $user = $userEmail;
-
     // Edit Rules (Add / Edit / Delete)
     if (isset($_POST['Salva'])) {
 
@@ -48,11 +53,13 @@
             
             $releData = $reles[$i];
 
-            if (!empty($releData[SENSOR]) && preg_match("/[A-Za-z0-9]+:[A-Za-z0-9]+/", $releData[SENSOR]) && !empty($releData[VALUE]) && is_numeric($releData[VALUE])) {
+            // preg_match("/[A-Za-z0-9]+:[A-Za-z0-9]+/", $releData[SENSOR])
+            if (!empty($releData[OSINODE]) && !empty($releData[PORT]) && !empty($releData[VALUE]) && is_numeric($releData[VALUE])) {
             
                 // Get Data
                 // echo $i . " "; print_r($releData); echo "<br/>";
-                list($osinode, $port) = explode(":", $releData[SENSOR]);
+                $osinode = $releData[OSINODE];
+                $port = $releData[PORT];
                 $comparator = isset($releData[COMPARATOR]) ? $releData[COMPARATOR] : '';
                 $value = $releData[VALUE];
                 $duration = !empty($releData[DURATION]) ? $releData[DURATION] : '0';
@@ -107,17 +114,39 @@
             }
 
             // Redirect
-            header("Location: /");
+            header("Location: /"); 
+            exit();
 
         }
 
     }
 
-    // CONNECTION TO DB WITH NEW USER
-    // INSERT YOUR NECAP EMAIL
-    // GET OSINODES && SENSORS LIST (With No Power && No Personal Data)
-    // DROPDOWN CHOICE OF OSINODE
-    // DROPDOWN CHOICE OF PORT WITH TYPE INFO
+    // Get User Data
+    $userEmail = rtrim(shell_exec("cat " . RULES_DIR . "ownerEmail"));
+    if ($userEmail) {
+        $PDO = new PDO('mysql:host=65.109.11.231; dbname=necap;
+        charset=utf8', 'localconfiguser', 'local');
+        $PDO->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        $sql = 'SELECT `osinode`.`osinodeId`, `portId`, `param`, `formula`, `unit` FROM `sensor-types` INNER JOIN `sensor` ON `sensor-types`.`id` = `sensor`.`sensorTypeId` INNER JOIN `osinode-sensors` ON `sensor`.`id` = `osinode-sensors`.`sensorId` INNER JOIN `osinode` ON `osinode-sensors`.`osinodeId` = `osinode`.`id` INNER JOIN `user-osinodes` ON `osinode`.`id` = `user-osinodes`.`osinodeId` INNER JOIN `user` ON `userId` = `user`.`id` WHERE `email` = :userEmail';
+        $pars = ['userEmail' => $userEmail];
+
+        $query = $PDO->prepare($sql);
+        $query->execute($pars);
+
+        $allData = $query->fetchAll();
+
+        $osinodes = [];
+        $osinodesNames = [];
+        foreach ($allData as $singleData) {
+            $osinodes[$singleData[OSINODE_ID]][] = $singleData;
+            if (!in_array($singleData[OSINODE_ID], $osinodesNames)) {
+                $osinodesNames[] = $singleData[OSINODE_ID];
+            }
+        }
+    }
+
+    // OsiNODE CHANGE CHANGES PORTS LIST
     // SENSOR = OSINODE : PORT 
     // UNIT
     // VALUE RAW FROM TRUE 

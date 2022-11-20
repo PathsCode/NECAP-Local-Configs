@@ -213,6 +213,12 @@ button {
 
     padding: 5px 10px;
     font-size: .9em;
+
+    margin-left: 15px;
+}
+
+.osinode-port-separator {
+    margin-left: 15px;
 }
 
 .sensor-value {
