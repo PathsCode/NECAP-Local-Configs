@@ -14,6 +14,7 @@
     const DURATION = 'duration';
     const DELAY = 'delay';
 
+    const TIME_CONFIG = 'timesettings';
     const START_TIME = 'startTime';
     const END_TIME = 'endTime';
 
@@ -37,111 +38,165 @@
         exit();
     }
 
-    // Get OsiRELE Name
-    $OSIRELE = rtrim(shell_exec("cat " . RULES_DIR . "osiRele"));
-    if ($OSIRELE == null) {
-        shell_exec("echo \"RE0000\" > " . RULES_DIR . "osiRele");
-        $OSIRELE = rtrim(shell_exec("cat " . RULES_DIR . "osiRele"));
-    }
-
     // Edit Rules (Add / Edit / Delete)
     if (isset($_POST['Salva'])) {
 
-        $reles = $_POST[RELE];
+        // Get OsiRELE Names
+        $OSIRELES_NAMES = [];
+        foreach (explode(" ", shell_exec("cat " . RULES_DIR . "osiRele")) as $OsiRELE_Name) {
+            $OsiRELE_Name = rtrim($OsiRELE_Name);
+            if ($OsiRELE_Name) {
+                $OSIRELES_NAMES[] = rtrim($OsiRELE_Name);
+            }
+        }
+        
+        // Empty OsiRELE List
+        shell_exec("echo \"\" > " . RULES_DIR . "osiRele");
+        
+        // Delete OsiRELE Files
+        foreach ($OSIRELES_NAMES as $OsiRELE_Name) {
+            for ($i = 1; $i <= RELE_NUM; $i++) {
+                if (file_exists(RULES_DIR . $OsiRELE_Name . "." . $i)) {
+                    shell_exec("rm " . RULES_DIR . $OsiRELE_Name . "." . $i);
+                }
+            }
+        }
 
+        // Delete TIME Files
         for ($i = 1; $i <= RELE_NUM; $i++) {
             
-            $releData = $reles[$i];
+            if (file_exists(RULES_DIR . TIMERANGE . "." . $i)) {
+                shell_exec("rm " . RULES_DIR . TIMERANGE . "." . $i);                     
+            }
 
-            // preg_match("/[A-Za-z0-9]+:[A-Za-z0-9]+/", $releData[SENSOR])
-            if (!empty($releData[OSINODE]) && !empty($releData[PORT]) && !empty($releData[VALUE]) && is_numeric($releData[VALUE])) {
-            
-                // Get Data
-                // echo $i . " "; print_r($releData); echo "<br/>";
-                $osinode = $releData[OSINODE];
-                $port = $releData[PORT];
-                $comparator = isset($releData[COMPARATOR]) ? $releData[COMPARATOR] : '';
-                $value = $releData[VALUE];
-                $duration = !empty($releData[DURATION]) ? $releData[DURATION] : '0';
-                $delay = !empty($releData[DELAY]) ? $releData[DELAY] : '0';
+        }
 
-                switch ($comparator) {
-                    case "<":
-                        $comparator = MINOR_THAN; break;
-                    case ">":
-                        $comparator = MAJOR_THAN; break;
-                    default:
-                        $comparator = null; break;
-                }
+        // RULES CONFIG
+        $rules = $_POST[RELE];
 
-                if (!$comparator) continue;
+        foreach ($rules as $OsiRELE_Name => $OsiRELE_Rules) {
 
-                // Save Config
-                $config = "threshold\n$osinode\n$port\n$comparator\n$value\n$duration\n$delay";
+            for ($i = 1; $i <= RELE_NUM; $i++) {
                 
-                if (file_exists(RULES_DIR . $OSIRELE . "." . $i)) {
-                    shell_exec("rm " . RULES_DIR . $OSIRELE . "." . $i);   // echo "rm " . RULES_DIR . $OSIRELE . "." . $i; echo "<br/>";
-                }
-                shell_exec("echo \"" . $config . "\" > " . RULES_DIR . $OSIRELE . "." . $i);   // echo "echo " . $config . " > " . RULES_DIR . $OSIRELE . "." . $i; echo "<br/><br/>";
+                $releData = $OsiRELE_Rules[$i];
 
-                // Get Time Data && Save Time Config
-                if ((!empty($releData[START_TIME]) && preg_match("/[0-2][0-9]\:[0-5][0-9]/", $releData[START_TIME])) && (!empty($releData[END_TIME]) && preg_match("/[0-2][0-9]\:[0-5][0-9]/", $releData[END_TIME]))) {
-                    
-                    $startTime = $releData[START_TIME];
-                    $endTime = $releData[END_TIME];
+                // preg_match("/[A-Za-z0-9]+:[A-Za-z0-9]+/", $releData[SENSOR])
+                if (!empty($releData[OSINODE]) && !empty($releData[PORT]) && !empty($releData[VALUE]) && is_numeric($releData[VALUE])) {
+                
+                    // Get Data
+                    // echo $i . " "; print_r($releData); echo "<br/>";
+                    $osinode = $releData[OSINODE];
+                    $port = $releData[PORT];
+                    $comparator = isset($releData[COMPARATOR]) ? $releData[COMPARATOR] : '';
+                    $value = $releData[VALUE];
+                    $duration = !empty($releData[DURATION]) ? $releData[DURATION] : '0';
+                    $delay = !empty($releData[DELAY]) ? $releData[DELAY] : '0';
 
-                    $timeConfig = "$startTime\n$endTime";
-
-                    if (file_exists(RULES_DIR . TIMERANGE . "." . $i)) {
-                        shell_exec("rm " . RULES_DIR . TIMERANGE . "." . $i);   // echo "rm " . RULES_DIR . TIMERANGE . "." . $i; echo "<br/>";                      
+                    switch ($comparator) {
+                        case "<":
+                            $comparator = MINOR_THAN; break;
+                        case ">":
+                            $comparator = MAJOR_THAN; break;
+                        default:
+                            $comparator = null; break;
                     }
-                    shell_exec("echo \"" . $timeConfig . "\" > " . RULES_DIR . TIMERANGE . "." . $i);   // echo "echo " . $timeConfig . " > " . RULES_DIR . TIMERANGE . "." . $i; echo "<br/><br/>";
 
+                    if (!$comparator) continue;
+
+                    // Save Config
+                    $config = "threshold\n$osinode\n$port\n$comparator\n$value\n$duration\n$delay";
+                    
+                    if (file_exists(RULES_DIR . $OsiRELE_Name . "." . $i)) {
+                        shell_exec("rm " . RULES_DIR . $OsiRELE_Name . "." . $i);   // echo "rm " . RULES_DIR . $OsiRELE_Name . "." . $i; echo "<br/>";
+                    }
+                    shell_exec("echo \"" . $config . "\" > " . RULES_DIR . $OsiRELE_Name . "." . $i);   // echo "echo " . $config . " > " . RULES_DIR . $OsiRELE_Name . "." . $i; echo "<br/><br/>";
+                
                 }
-            
-            } else {
-
-                // Delete Config 
-                if (file_exists(RULES_DIR . $OSIRELE . "." . $i)) {
-                    shell_exec("rm " . RULES_DIR . $OSIRELE . "." . $i);
-                }
-
-                // Delete Time Config
-                if (file_exists(RULES_DIR . TIMERANGE . "." . $i)) {
-                    shell_exec("rm " . RULES_DIR . TIMERANGE . "." . $i);                     
-                }
-
+                
             }
-
-            // Redirect
-            header("Location: /"); 
-            exit();
-
+        
         }
 
-    }
+        // TIME CONFIG
+        $timeconfigs = $_POST[TIME_CONFIG];
 
-    // Get User Data
-    $userEmail = rtrim(shell_exec("cat " . RULES_DIR . "ownerEmail"));
-    if ($userEmail) {
-        $PDO = new PDO('mysql:host=65.109.11.231; dbname=necap;
-        charset=utf8', 'localconfiguser', 'local');
-        $PDO->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        foreach ($timeconfigs as $timeidentifier => $timeconfig) {
 
-        $sql = 'SELECT `osinode`.`osinodeId`, `portId`, `param`, `formula`, `unit` FROM `sensor-types` INNER JOIN `sensor` ON `sensor-types`.`id` = `sensor`.`sensorTypeId` INNER JOIN `osinode-sensors` ON `sensor`.`id` = `osinode-sensors`.`sensorId` INNER JOIN `osinode` ON `osinode-sensors`.`osinodeId` = `osinode`.`id` INNER JOIN `user-osinodes` ON `osinode`.`id` = `user-osinodes`.`osinodeId` INNER JOIN `user` ON `userId` = `user`.`id` WHERE `email` = :userEmail';
-        $pars = ['userEmail' => $userEmail];
+            // Get Time Start Data
+            $timeStart = null;
+            foreach ($timeconfig[START_TIME] as $timeStartCandidate) {
+                if ($timeStartCandidate) $timeStart = $timeStartCandidate;
+            }
 
-        $query = $PDO->prepare($sql);
-        $query->execute($pars);
+            // Get Time End Data
+            $timeEnd = null;
+            foreach ($timeconfig[END_TIME] as $timeEndCandidate) {
+                if ($timeEndCandidate) $timeEnd = $timeEndCandidate;
+            }
 
-        $allData = $query->fetchAll();
+            echo $timeidentifier . ' '; print_r($timeconfig);
+            echo 'Time Start: ' . $timeStart . "   Time End: ". $timeEnd . '<br>';
 
-        $osinodes = [];
-        $osinodesNames = [];
-        foreach ($allData as $singleData) {
-            $osinodes[$singleData[OSINODE_ID]][] = $singleData;
-            if (!in_array($singleData[OSINODE_ID], $osinodesNames)) {
-                $osinodesNames[] = $singleData[OSINODE_ID];
+            // Save Time Config
+            if ((!empty($timeStart) && preg_match("/[0-2][0-9]\:[0-5][0-9]/", $timeStart)) && (!empty($timeEnd) && preg_match("/[0-2][0-9]\:[0-5][0-9]/", $timeEnd))) {
+    
+                $timeConfig = "$timeStart\n$timeEnd";
+    
+                if (file_exists(RULES_DIR . TIMERANGE . "." . $timeidentifier)) {
+                    shell_exec("rm " . RULES_DIR . TIMERANGE . "." . $timeidentifier);   // echo "rm " . RULES_DIR . TIMERANGE . "." . $timeidentifier; echo "<br/>";                      
+                }
+                shell_exec("echo \"" . $timeConfig . "\" > " . RULES_DIR . TIMERANGE . "." . $timeidentifier);   // echo "echo " . $timeConfig . " > " . RULES_DIR . TIMERANGE . "." . $timeidentifier; echo "<br/><br/>";
+    
+            } 
+        
+        }
+
+        exit();
+
+        // Redirect
+        header("Location: /"); 
+        exit();
+
+    } else {
+
+        // Get OsiRELE Names
+        $OSIRELES_NAMES = [];
+        foreach (explode(" ", shell_exec("cat " . RULES_DIR . "osiRele")) as $OsiRELE_Name) {
+            $OsiRELE_Name = rtrim($OsiRELE_Name);
+            if ($OsiRELE_Name) {
+                $OSIRELES_NAMES[] = rtrim($OsiRELE_Name);
             }
         }
+
+        // Create OsiRELE if NULL
+        if ($OSIRELES_NAMES == null) {
+            shell_exec("echo \"RE0001\" > " . RULES_DIR . "osiRele");
+            $OSIRELES_NAMES = ["RE0001"];
+        }
+
+        // Get User Data
+        $userEmail = rtrim(shell_exec("cat " . RULES_DIR . "ownerEmail"));
+        if ($userEmail) {
+            $PDO = new PDO('mysql:host=65.109.11.231; dbname=necap;
+            charset=utf8', 'localconfiguser', 'local');
+            $PDO->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+            $sql = 'SELECT `osinode`.`osinodeId`, `portId`, `param`, `formula`, `unit` FROM `sensor-types` INNER JOIN `sensor` ON `sensor-types`.`id` = `sensor`.`sensorTypeId` INNER JOIN `osinode-sensors` ON `sensor`.`id` = `osinode-sensors`.`sensorId` INNER JOIN `osinode` ON `osinode-sensors`.`osinodeId` = `osinode`.`id` INNER JOIN `user-osinodes` ON `osinode`.`id` = `user-osinodes`.`osinodeId` INNER JOIN `user` ON `userId` = `user`.`id` WHERE `email` = :userEmail';
+            $pars = ['userEmail' => $userEmail];
+
+            $query = $PDO->prepare($sql);
+            $query->execute($pars);
+
+            $allData = $query->fetchAll();
+
+            $osinodes = [];
+            $osinodesNames = [];
+            foreach ($allData as $singleData) {
+                $osinodes[$singleData[OSINODE_ID]][] = $singleData;
+                if (!in_array($singleData[OSINODE_ID], $osinodesNames)) {
+                    $osinodesNames[] = $singleData[OSINODE_ID];
+                }
+            }
+        }
+
     }
