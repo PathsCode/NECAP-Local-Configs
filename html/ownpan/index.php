@@ -2,11 +2,11 @@
 
 include('php_/login.php');
 
-include('php_/rules.php');
-
 if (isset($_SESSION['login_user'])) {
     header("location: php_/profile.php");
 }
+
+include('php_/rules.php');
 
 if (file_exists("/srv/data/sysname")) {
     $myfile = fopen("/srv/data/sysname", "r");
@@ -83,7 +83,7 @@ if (file_exists("/srv/data/sysname")) {
     <body class="flex-vertical">
         <h1>OsiGATE: <i><?php echo $sysname ?></i></h1>
         <div class="flex-vertical" id="login">
-            <b>Login - Admin</b>
+            <b>Login ADMIN</b>
             <form action="" method="post" class="flex-vertical" id="login-form" autocomplete="off">
                 <input autocomplete="off" name="username" type="text" class="none">
                 <input autocomplete="off" name="password" type="password" class="none">
@@ -98,20 +98,22 @@ if (file_exists("/srv/data/sysname")) {
                     </div>
                 </div>
                 <span id="<?= $error ? 'error-login' : ''?>"><?= $error ? 'Username o Password errata' : '' ?></span>
-                <input name="submit" type="submit" value="Login" class="confirm-button">
+                <input name="submit" type="submit" value="Login" class="confirm-button cursor">
             </form>
         </div>
         <h1 class="rules-title">Regole</h1>
         <form action="php_/rules.php" method="post" class="reles">
             <div class="rele user-select <?= $allData ? '' : 'no-user-selected' ?>" id="user-select">
-                <span>Utente: </span>
-                <input name="ownerEmail" type="text" value="<?= $userEmail ?>" placeholder="Email NECAP">
-                <button type="submit" class="enter" name="SelezionaUtente">
-                    <img src="/css_/check.png">
-                </button>
+                <span>Utente </span>
+                <div class="flex">
+                    <input name="ownerEmail" type="text" value="<?= $userEmail ?>" placeholder="Email NECAP">
+                    <button type="submit" class="enter" name="SelezionaUtente">
+                        <img src="/css_/check.png">
+                    </button>
+                </div>
             </div>
             
-            <?php if ($error) : ?>
+            <?php if ($connError) : ?>
                 <div class="main-error rele">
                     <span>Errore di Connessione al database NECAP.TECH</span>
                 </div>

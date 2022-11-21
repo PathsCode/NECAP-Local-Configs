@@ -252,9 +252,9 @@
                     }
                 }
 
-                $error = false;
+                $connError = false;
             } catch (PDOException $e) {
-                $error = true;
+                $connError = true;
             }
 
         }

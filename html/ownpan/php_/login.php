@@ -22,7 +22,6 @@ if (isset($_POST['submit'])) {
     else
     {
       $error = "Username or Password is invalid";
-      header("location: /index.php");
     }
   }
 }
