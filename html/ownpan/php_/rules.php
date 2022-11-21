@@ -151,8 +151,6 @@
         
         }
 
-        exit();
-
         // Redirect
         header("Location: /"); 
         exit();
@@ -197,6 +195,12 @@
                     $osinodesNames[] = $singleData[OSINODE_ID];
                 }
             }
+
         }
 
     }
+
+    // Empty Rule Adjustment
+    // On OsiRELE Adjustment
+    // Add OsiRELE Button
+    // OsiRELE Template to Import

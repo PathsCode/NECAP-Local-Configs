@@ -140,7 +140,7 @@ button {
     background-color: white;
 }
 
-.rele {
+.rele, .osirele-title-div {
     width: 96%;
     padding: 15px 2%;
 
@@ -148,14 +148,12 @@ button {
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
-}
 
-.rele:not(:first-of-type) {
-    margin-top: 21px;
-}
-
-.rele {
     margin-bottom: 21px;
+}
+
+.rele:not(:first-child).rele:not(:nth-child(2)) {
+    margin-top: 21px;
 }
 
 .rele h2 {
@@ -168,6 +166,17 @@ button {
     background-color: var(--RED);
 
     font-size: 1em;
+}
+
+.osirele-title-div {
+    margin-bottom: 0 !important;
+}
+
+.osirele-title {
+    font-weight: bold;
+    font-size: 1.75em;
+
+    color: red;
 }
 
 .rele-title img {
