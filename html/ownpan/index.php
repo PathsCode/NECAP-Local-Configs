@@ -157,41 +157,45 @@ if (file_exists("/srv/data/sysname")) {
                                     <h2>RELÈ <?= $releId; ?></h2>
                                     <img src="/css_/x-png-33.png" class="delete-rule cursor" onclick="emptyRule(this)"/>
                                 </div>
-                                <div class="rule-main rule-info">
-                                    <span>SE</span>
-                                    <select name="<?= "rele[" . $ReleName . "][" . $releId . "][osinode]" ?>" class="select-comparison osinode-selection" onchange="onOsinodeChange(this, <?= $releId ?>)">
-                                        <option disabled selected value class="none"> --- </option>
-                                        <?php foreach ($osinodes as $osinodeId => $singleData) : ?>
-                                            <option <?= $releOsinode == $osinodeId ? 'selected' : '' ?>><?= $osinodeId ?></option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                    <span class="osinode-port-separator">:</span>
-                                    <select name="<?= "rele[" . $ReleName . "][" . $releId . "][port]" ?>" class="select-comparison port-selection" onchange="onPortChange(this, '<?= ($releOsinode && in_array($releOsinode, $osinodesNames)) ? $releOsinode : '' ?>')">
-                                        <?php if ($releOsinode && in_array($releOsinode, $osinodesNames)) : ?>
-                                            <?php foreach ($osinodes[$releOsinode] as $possibleData) : ?>
-                                                <option <?= $relePort == $possibleData[PORT_ID] ? 'selected' : '' ?> value="<?= $possibleData[PORT_ID]?>"><?= $possibleData[PARAM] ?> (<?= $possibleData[PORT_ID] ?>)</option>
+                                <div class="inline-rule-info">
+                                    <div class="rule-main rule-info">
+                                        <span>SE</span>
+                                        <select name="<?= "rele[" . $ReleName . "][" . $releId . "][osinode]" ?>" class="select-comparison osinode-selection" onchange="onOsinodeChange(this, <?= $releId ?>)">
+                                            <option disabled selected value class="none"> --- </option>
+                                            <?php foreach ($osinodes as $osinodeId => $singleData) : ?>
+                                                <option <?= $releOsinode == $osinodeId ? 'selected' : '' ?>><?= $osinodeId ?></option>
                                             <?php endforeach; ?>
-                                        <?php endif; ?>
-                                    </select>
-                                    <select name="<?= "rele[" . $ReleName . "][" . $releId . "][comparator]" ?>" class="select-comparison">
-                                        <option <?= $releComparator == MINOR_THAN ? 'selected' : '' ?>><</option>
-                                        <option <?= $releComparator == MAJOR_THAN ? 'selected' : '' ?>>></option>
-                                    </select>
-                                    <input name="<?= "rele[" . $ReleName . "][" . $releId . "][value]" ?>" type="number" value="<?= $releValue ?>" placeholder="Valore" class="sensor-value">
-                                    <span class="unit"></span>
+                                        </select>
+                                        <span class="osinode-port-separator">:</span>
+                                        <select name="<?= "rele[" . $ReleName . "][" . $releId . "][port]" ?>" class="select-comparison port-selection" onchange="onPortChange(this, '<?= ($releOsinode && in_array($releOsinode, $osinodesNames)) ? $releOsinode : '' ?>')">
+                                            <?php if ($releOsinode && in_array($releOsinode, $osinodesNames)) : ?>
+                                                <?php foreach ($osinodes[$releOsinode] as $possibleData) : ?>
+                                                    <option <?= $relePort == $possibleData[PORT_ID] ? 'selected' : '' ?> value="<?= $possibleData[PORT_ID]?>"><?= $possibleData[PARAM] ?> (<?= $possibleData[PORT_ID] ?>)</option>
+                                                <?php endforeach; ?>
+                                            <?php endif; ?>
+                                        </select>
+                                        <select name="<?= "rele[" . $ReleName . "][" . $releId . "][comparator]" ?>" class="select-comparison">
+                                            <option <?= $releComparator == MINOR_THAN ? 'selected' : '' ?>><</option>
+                                            <option <?= $releComparator == MAJOR_THAN ? 'selected' : '' ?>>></option>
+                                        </select>
+                                        <input name="<?= "rele[" . $ReleName . "][" . $releId . "][value]" ?>" type="number" value="<?= $releValue ?>" placeholder="Valore" class="sensor-value">
+                                        <span class="unit"></span>
+                                    </div>
+                                    <div class="rule-delay rule-info">
+                                        <span>ACCENDI RELÈ PER</span>
+                                        <input name="<?= "rele[" . $ReleName . "][" . $releId . "][duration]" ?>" type="number" value="<?= $releDuration ?>" placeholder="0" min=0 class="duration-value">
+                                        <span>MINUTI E DISATTIVALO PER</span>
+                                        <input name="<?= "rele[" . $ReleName . "][" . $releId . "][delay]" ?>" type="number" value="<?= $releDelay ?>" placeholder="0" min=0 class="delay-value">
+                                        <span>MINUTI</span>
+                                    </div>
                                 </div>
-                                <div class="rule-delay rule-info">
-                                    <span>ACCENDI RELÈ PER</span>
-                                    <input name="<?= "rele[" . $ReleName . "][" . $releId . "][duration]" ?>" type="number" value="<?= $releDuration ?>" placeholder="0" min=0 class="duration-value">
-                                    <span>SECONDI E DISATTIVALO PER</span>
-                                    <input name="<?= "rele[" . $ReleName . "][" . $releId . "][delay]" ?>" type="number" value="<?= $releDelay ?>" placeholder="0" min=0 class="delay-value">
-                                    <span>SECONDI</span>
-                                </div>
-                                <div class="rule-time rule-info">
-                                    <span>La Regola è in funzione dalle</span>
-                                    <input name="<?= "timesettings[" . $releId . "][startTime][]" ?>" type="time" value="<?= $releStart ?>" placeholder="00:00" class="start<?= $releId ?> start-time time-selection" onchange="onTimeChange(this, 'start<?= $releId ?>')">
-                                    <span>alle</span>
-                                    <input name="<?= "timesettings[" . $releId . "][endTime][]" ?>" type="time" value="<?= $releEnd ?>" placeholder="23:59" class="end<?= $releId ?> end-time time-selection" onchange="onTimeChange(this, 'end<?= $releId ?>')">
+                                <div class="inline-rule-info">
+                                    <div class="rule-time rule-info">
+                                        <span>La Regola è in funzione dalle</span>
+                                        <input name="<?= "timesettings[" . $releId . "][startTime][]" ?>" type="time" value="<?= $releStart ?>" placeholder="00:00" class="start<?= $releId ?> start-time time-selection" onchange="onTimeChange(this, 'start<?= $releId ?>')">
+                                        <span>alle</span>
+                                        <input name="<?= "timesettings[" . $releId . "][endTime][]" ?>" type="time" value="<?= $releEnd ?>" placeholder="23:59" class="end<?= $releId ?> end-time time-selection" onchange="onTimeChange(this, 'end<?= $releId ?>')">
+                                    </div>
                                 </div>
                             </div>
                         <?php endfor; ?>

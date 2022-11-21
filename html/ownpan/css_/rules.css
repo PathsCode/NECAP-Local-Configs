@@ -49,6 +49,18 @@ input[type="text"] {
     padding: 1px 2px;
 }
 
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    appearance: none;
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    appearance: textfield;
+    -moz-appearance: textfield;
+}
+
 button {
     background: none;
     border: none;
@@ -136,7 +148,6 @@ button {
     margin: 36px 0 !important;
 }
 
-/* TEMP */
 .osirele:not(:first-child).osirele:not(:nth-child(2)) {
     margin-top: 64px;
 }
@@ -152,7 +163,6 @@ button {
     color: red;
 }
 
-/* TEMP */
 .reles {
     width: 80%;
     padding: 40px 2.5%; 
@@ -175,7 +185,6 @@ button {
     margin-bottom: 21px;
 }
 
-/* TEMP */
 .rele:not(:first-child).rele:not(:nth-child(2)) {
     margin-top: 21px;
 }
@@ -200,7 +209,6 @@ button {
     margin-left: 27px;
 }
 
-/* TEMP */
 .rule-info {
     display: flex;
     align-items: center;
@@ -208,26 +216,22 @@ button {
     margin-top: 18px;
 }
 
-/* TEMP */
 .rule-main {
     margin-left: 18px;
     font-size: 1.25em;
 }
 
-/* TEMP */
 .rule-delay {
     margin-left: 36px;
     font-size: 1.1em;
 }
 
-/* TEMP */
 .rule-time {
     margin-left: 18px;
     font-size: 1.1em;
 }
 
-/* TEMP */
-.sensor-input {
+.sensor-input { /* Easter Egg from "Old" Version that lasted less than 1 Day */
     width: 210px;
     margin: 0 15px;
 }
@@ -247,24 +251,20 @@ button {
     margin-left: 15px;
 }
 
-/* TEMP */
 .osinode-port-separator, .unit {
     margin-left: 15px;
 }
 
-/* TEMP */
 .sensor-value {
     width: 150px;
     margin-left: 15px;
 }
 
-/* TEMP */
 .duration-value, .delay-value {
     width: 90px;
     margin: 0 15px;
 }
 
-/* TEMP */
 .time-selection {
     width: 125px;
     margin: 0 15px;
@@ -355,6 +355,48 @@ button.enter img {
         margin-bottom: 21px;
     }
 
+    .inline-rule-info {
+        display: inline-block;
+        margin: 0 8px;
+        margin-top: 18px;
+        
+        text-align: justify;
+    }
+
+    .inline-rule-info .rule-info {
+        display: inline;
+        margin-left: 0 !important;
+
+        line-height: 42px;
+
+        font-size: 1em !important; 
+        text-align: justify;
+    }
+
+    .rule-info > * {
+        margin: 0 !important;
+    } 
+
+    .rele select {
+        padding: 3px 6px;    
+    }
+
+    .rele input {
+        padding: 1px 0; 
+    }
+
+    .sensor-value {
+        width: 100px;
+    }
+
+    .duration-value, .delay-value {
+        width: 60px;
+    }
+
+    .time-selection {
+        width: 100px;
+    }
+
 }
 
 @media (max-width: 725px) {
@@ -390,8 +432,24 @@ button.enter img {
         font-size: 19px;
     }
 
-    input {
-        font-size: 1.1em;
+    input, select {
+        font-size: 1em;
+    }
+
+    .osirele:not(:first-child).osirele:not(:nth-child(2)) {
+        margin-top: 42px;
+    }
+
+    .rele {
+        margin-bottom: 9px;
+    }
+
+    .rele:not(:first-child).rele:not(:nth-child(2)) {
+        margin-top: 9px;
+    }
+
+    .time-selection {
+        width: 90px !important;
     }
 
 }
