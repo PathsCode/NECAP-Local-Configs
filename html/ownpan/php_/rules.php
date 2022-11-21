@@ -29,6 +29,8 @@
     const PORT_ID = 'portId';
     const PARAM = 'param';
 
+    const DEFAULT_OSIRELE = 'RE0001';
+
     // Select User Email
     if (isset($_POST['SelezionaUtente'])) {
         $ownerEmail = $_POST['ownerEmail'];
@@ -38,12 +40,50 @@
         exit();
     }
 
-    // Edit Rules (Add / Edit / Delete)
-    if (isset($_POST['Salva'])) {
+    // Add OsiRELE
+    else if (isset($_POST['Aggiungi'])) {
 
         // Get OsiRELE Names
         $OSIRELES_NAMES = [];
-        foreach (explode(" ", shell_exec("cat " . RULES_DIR . "osiRele")) as $OsiRELE_Name) {
+        foreach (explode("\n", shell_exec("cat " . RULES_DIR . "osiRele")) as $OsiRELE_Name) {
+            $OsiRELE_Name = rtrim($OsiRELE_Name);
+            if ($OsiRELE_Name) $OSIRELES_NAMES[] = rtrim($OsiRELE_Name);
+        }
+        print_r($OSIRELES_NAMES);
+
+        // Select New OsiRELE Name
+        if (empty($OSIRELES_NAMES)) {
+            $newName = DEFAULT_OSIRELE;
+        } else {
+            $lastName = end($OSIRELES_NAMES);
+            $lastNum = intval(substr($lastName, 2));
+            $newNum = $lastNum + 1;
+            $newName = "RE" . str_pad($newNum, 4, '0', STR_PAD_LEFT);
+        }
+
+        // Build New OsiRELE Names List
+        $namesList = "";
+        foreach ($OSIRELES_NAMES as $OsiRELE_Name) {
+            if ($namesList) $namesList .= "\n";
+            $namesList .= $OsiRELE_Name;
+        }
+
+        if ($namesList) $namesList .= "\n";
+        $namesList .= $newName;
+
+        // Apply Changes
+        shell_exec("echo \"" . $namesList . "\" > " . RULES_DIR . "osiRele");
+
+        header('Location: /');
+        exit();        
+    }
+
+    // Edit Rules (Add / Edit / Delete)
+    else if (isset($_POST['Salva'])) {
+
+        // Get OsiRELE Names
+        $OSIRELES_NAMES = [];
+        foreach (explode("\n", shell_exec("cat " . RULES_DIR . "osiRele")) as $OsiRELE_Name) {
             $OsiRELE_Name = rtrim($OsiRELE_Name);
             if ($OsiRELE_Name) {
                 $OSIRELES_NAMES[] = rtrim($OsiRELE_Name);
@@ -52,6 +92,7 @@
         
         // Empty OsiRELE List
         shell_exec("echo \"\" > " . RULES_DIR . "osiRele");
+        $activeOsiRELES = [];
         
         // Delete OsiRELE Files
         foreach ($OSIRELES_NAMES as $OsiRELE_Name) {
@@ -111,6 +152,11 @@
                     }
                     shell_exec("echo \"" . $config . "\" > " . RULES_DIR . $OsiRELE_Name . "." . $i);   // echo "echo " . $config . " > " . RULES_DIR . $OsiRELE_Name . "." . $i; echo "<br/><br/>";
                 
+                    // Save Rele Name
+                    if (!in_array($OsiRELE_Name, $activeOsiRELES)) {
+                        $activeOsiRELES[] = $OsiRELE_Name;
+                    }
+
                 }
                 
             }
@@ -151,15 +197,24 @@
         
         }
 
+        // Save OsiRELES
+        $activeOsiRELEStxt = "";
+        foreach ($activeOsiRELES as $activeOsiRELE) {
+            if ($activeOsiRELEStxt) $activeOsiRELEStxt .= "\n";
+            $activeOsiRELEStxt .= $activeOsiRELE;
+        }
+        shell_exec("echo \"" . $activeOsiRELEStxt . "\" > " . RULES_DIR . "osiRele");
+
         // Redirect
         header("Location: /"); 
         exit();
 
+    // View Rules for index.php
     } else {
 
         // Get OsiRELE Names
         $OSIRELES_NAMES = [];
-        foreach (explode(" ", shell_exec("cat " . RULES_DIR . "osiRele")) as $OsiRELE_Name) {
+        foreach (explode("\n", shell_exec("cat " . RULES_DIR . "osiRele")) as $OsiRELE_Name) {
             $OsiRELE_Name = rtrim($OsiRELE_Name);
             if ($OsiRELE_Name) {
                 $OSIRELES_NAMES[] = rtrim($OsiRELE_Name);
@@ -169,7 +224,7 @@
         // Create OsiRELE if NULL
         if ($OSIRELES_NAMES == null) {
             shell_exec("echo \"RE0001\" > " . RULES_DIR . "osiRele");
-            $OSIRELES_NAMES = ["RE0001"];
+            $OSIRELES_NAMES = [DEFAULT_OSIRELE];
         }
 
         // Get User Data
@@ -199,6 +254,3 @@
         }
 
     }
-
-    // Add OsiRELE Button
-    // OsiRELE Template to Import

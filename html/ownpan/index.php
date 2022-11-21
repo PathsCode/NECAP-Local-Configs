@@ -181,6 +181,12 @@ if (file_exists("/srv/data/sysname")) {
                         <?php endfor; ?>
                     </div>
                 <?php endforeach; ?>
+                <div class="add-osirele-div rele flex">
+                    <span>Aggiungi OsiRELE</span>
+                    <button name="Aggiungi" class="cursor">
+                        <img src="/css_/add.png" />
+                    </button>
+                </div>
                 <input type="submit" name="Salva" value="Salva Modifiche" class="confirm-button update-rules cursor">
             <?php endif; ?>
         </form>

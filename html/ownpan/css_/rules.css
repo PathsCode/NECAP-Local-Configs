@@ -130,6 +130,21 @@ button {
     margin: 36px 0 !important;
 }
 
+.osirele:not(:first-of-type) {
+    margin-top: 64px;
+}
+
+.osirele-title-div {
+    margin-bottom: 0 !important;
+}
+
+.osirele-title {
+    font-weight: bold;
+    font-size: 1.75em;
+
+    color: red;
+}
+
 .reles {
     width: 80%;
     padding: 40px 2.5%; 
@@ -166,17 +181,6 @@ button {
     background-color: var(--RED);
 
     font-size: 1em;
-}
-
-.osirele-title-div {
-    margin-bottom: 0 !important;
-}
-
-.osirele-title {
-    font-weight: bold;
-    font-size: 1.75em;
-
-    color: red;
 }
 
 .rele-title img {
@@ -280,4 +284,22 @@ button.enter {
 button.enter img {
     width: 27px;
     height: 27px;
+}
+
+.add-osirele-div {
+    flex-direction: row !important;
+    justify-content: flex-start;
+    align-items: center;
+
+    font-weight: bold;
+    font-size: 1.25em;
+}
+
+.add-osirele-div span {
+    text-transform: uppercase;
+}
+
+.add-osirele-div img {
+    width: 39px;
+    margin-left: 16px;
 }
