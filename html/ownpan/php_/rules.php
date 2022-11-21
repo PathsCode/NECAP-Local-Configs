@@ -28,6 +28,8 @@
     const OSINODE_ID = 'osinodeId';
     const PORT_ID = 'portId';
     const PARAM = 'param';
+    const FORMULA = 'formula';
+    const UNIT = 'unit';
 
     const DEFAULT_OSIRELE = 'RE0001';
 
@@ -129,10 +131,12 @@
                     $osinode = $releData[OSINODE];
                     $port = $releData[PORT];
                     $comparator = isset($releData[COMPARATOR]) ? $releData[COMPARATOR] : '';
-                    $value = $releData[VALUE];
+                    $finalValue = $releData[VALUE];
+                    $formula = $releData[FORMULA];
                     $duration = !empty($releData[DURATION]) ? $releData[DURATION] : '0';
                     $delay = !empty($releData[DELAY]) ? $releData[DELAY] : '0';
 
+                    // Get Comparator
                     switch ($comparator) {
                         case "<":
                             $comparator = MINOR_THAN; break;
@@ -143,6 +147,27 @@
                     }
 
                     if (!$comparator) continue;
+
+                    // Get Raw Data
+                    $expression = $finalValue . " = " . $formula;
+                    $value = $finalValue;
+                    echo $formula . ' ' . $finalValue . ' "' . $expression . '"<br/>';
+
+                    /*
+                    function getValue($expr = "", $x = 0, $decDigits = 3) {
+                        if ($expr == null || strtolower($expr) == "null") {
+                            return $expr;
+                        }
+
+                        $expr = str_replace("x", $x, $expr);
+
+                        if (!preg_match("/[^0-9\(\)\+\-\/\*\.]/", $expr)) {
+                            $value = round(eval("return " . $expr . ";"), $decDigits);  // Formula 
+                        } else {
+                            $value = null;  // Malicious Code
+                        }
+                    }
+                    */
 
                     // Save Config
                     $config = "threshold\n$osinode\n$port\n$comparator\n$value\n$duration\n$delay";
@@ -180,8 +205,8 @@
                 if ($timeEndCandidate) $timeEnd = $timeEndCandidate;
             }
 
-            echo $timeidentifier . ' '; print_r($timeconfig);
-            echo 'Time Start: ' . $timeStart . "   Time End: ". $timeEnd . '<br>';
+            // echo $timeidentifier . ' '; print_r($timeconfig);
+            // echo 'Time Start: ' . $timeStart . "   Time End: ". $timeEnd . '<br>';
 
             // Save Time Config
             if ((!empty($timeStart) && preg_match("/[0-2][0-9]\:[0-5][0-9]/", $timeStart)) && (!empty($timeEnd) && preg_match("/[0-2][0-9]\:[0-5][0-9]/", $timeEnd))) {
@@ -206,6 +231,7 @@
         shell_exec("echo \"" . $activeOsiRELEStxt . "\" > " . RULES_DIR . "osiRele");
 
         // Redirect
+        exit();
         header("Location: /"); 
         exit();
 

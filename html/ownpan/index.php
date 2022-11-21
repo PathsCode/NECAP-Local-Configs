@@ -25,6 +25,7 @@ if (file_exists("/srv/data/sysname")) {
         rele.getElementsByClassName('port-selection')[0].innerHTML = '';
         rele.getElementsByClassName('select-comparison')[0].selectedIndex = 0;
         rele.getElementsByClassName('sensor-value')[0].value = null;
+        rele.getElementsByClassName('formula')[0].value = null;
         rele.getElementsByClassName('unit')[0].innerText = '';
         rele.getElementsByClassName('duration-value')[0].value = null;
         rele.getElementsByClassName('delay-value')[0].value = null;
@@ -38,6 +39,7 @@ if (file_exists("/srv/data/sysname")) {
         unitInfo = rele.getElementsByClassName('unit')[0];
 
         portSelect.innerHTML = '<select>';
+        portSelect.innerHTML += '<option disabled selected value class="none"> --- </option>';
         osinodes[osinodeInputEl.value].forEach(possibleData => {
             portSelect.innerHTML += '<option value="' + possibleData[PORT_ID] + '">' + possibleData[PARAM] + ' (' + possibleData[PORT_ID] + ')</option>';
         });
@@ -50,10 +52,12 @@ if (file_exists("/srv/data/sysname")) {
     function onPortChange(portInputEl, osinodeName) {
         rele = portInputEl.parentNode;
         unitInfo = rele.getElementsByClassName('unit')[0];
+        formulaInfo = rele.getElementsByClassName('formula')[0];
 
         osinodes[osinodeName].forEach(possibleData => {
             if (possibleData[PORT_ID] == portInputEl.value) {
                 unitInfo.innerText = possibleData[UNIT];
+                formulaInfo.value = possibleData[FORMULA];
             }
         });
     }
@@ -70,6 +74,7 @@ if (file_exists("/srv/data/sysname")) {
 
     PORT_ID = 'portId';
     PARAM = 'param';
+    FORMULA = 'formula';
     UNIT = 'unit';
 </script>
 
@@ -150,6 +155,17 @@ if (file_exists("/srv/data/sysname")) {
                                 } else {
                                     $releStart = $releEnd = "";
                                 }
+
+                                $releUnit = null;
+                                $releFormula = null;
+                                if ($releOsinode && in_array($releOsinode, $osinodesNames)) {
+                                    foreach ($osinodes[$releOsinode] as $possibleData) {
+                                        if ($relePort == $possibleData[PORT_ID]) {
+                                            $releFormula = $possibleData[FORMULA];
+                                            $releUnit = $possibleData[UNIT];
+                                        }
+                                    }
+                                }
                             ?>
 
                             <div class="rele" id="<?= "rele" . $releId ?>">
@@ -168,6 +184,7 @@ if (file_exists("/srv/data/sysname")) {
                                         </select>
                                         <span class="osinode-port-separator">:</span>
                                         <select name="<?= "rele[" . $ReleName . "][" . $releId . "][port]" ?>" class="select-comparison port-selection" onchange="onPortChange(this, '<?= ($releOsinode && in_array($releOsinode, $osinodesNames)) ? $releOsinode : '' ?>')">
+                                            <option disabled selected value class="none"> --- </option>
                                             <?php if ($releOsinode && in_array($releOsinode, $osinodesNames)) : ?>
                                                 <?php foreach ($osinodes[$releOsinode] as $possibleData) : ?>
                                                     <option <?= $relePort == $possibleData[PORT_ID] ? 'selected' : '' ?> value="<?= $possibleData[PORT_ID]?>"><?= $possibleData[PARAM] ?> (<?= $possibleData[PORT_ID] ?>)</option>
@@ -179,7 +196,8 @@ if (file_exists("/srv/data/sysname")) {
                                             <option <?= $releComparator == MAJOR_THAN ? 'selected' : '' ?>>></option>
                                         </select>
                                         <input name="<?= "rele[" . $ReleName . "][" . $releId . "][value]" ?>" type="number" value="<?= $releValue ?>" placeholder="Valore" class="sensor-value">
-                                        <span class="unit"></span>
+                                        <input name="<?= "rele[" . $ReleName . "][" . $releId . "][formula]" ?>" type=hidden value="<?= $releFormula ? $releFormula : '' ?>" class="formula">
+                                        <span class="unit"><?= $releUnit ? $releUnit : '' ?></span>
                                     </div>
                                     <div class="rule-delay rule-info">
                                         <span>ACCENDI RELÈ PER</span>
