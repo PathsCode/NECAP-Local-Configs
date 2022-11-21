@@ -102,7 +102,7 @@ if (file_exists("/srv/data/sysname")) {
             </form>
         </div>
         <h1 class="rules-title">Regole</h1>
-        <form action="php_/rules.php" method="post" class="reles">
+        <form action="php_/rules.php" method="post" class="reles <?= $allData ? '' : 'no-user-selected' ?>">
             <div class="rele user-select <?= $allData ? '' : 'no-user-selected' ?>" id="user-select">
                 <span>Utente </span>
                 <div class="flex">
