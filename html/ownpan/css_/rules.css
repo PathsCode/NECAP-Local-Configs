@@ -35,7 +35,9 @@ html {
 }
 
 h1 {
+    max-width: 90%;
     margin-top: 30px;
+
     color: red;
 }
 
@@ -59,6 +61,10 @@ button {
 
 .cursor {
     cursor: pointer;
+}
+
+.full-width {
+    width: 100% !important;
 }
 
 .flex {
@@ -130,7 +136,8 @@ button {
     margin: 36px 0 !important;
 }
 
-.osirele:not(:first-of-type) {
+/* TEMP */
+.osirele:not(:first-child).osirele:not(:nth-child(2)) {
     margin-top: 64px;
 }
 
@@ -145,6 +152,7 @@ button {
     color: red;
 }
 
+/* TEMP */
 .reles {
     width: 80%;
     padding: 40px 2.5%; 
@@ -167,6 +175,7 @@ button {
     margin-bottom: 21px;
 }
 
+/* TEMP */
 .rele:not(:first-child).rele:not(:nth-child(2)) {
     margin-top: 21px;
 }
@@ -175,6 +184,7 @@ button {
     text-transform: uppercase;
 }
 
+/* TEMP */
 .update-rules {
     width: 250px;
 
@@ -183,12 +193,14 @@ button {
     font-size: 1em;
 }
 
+/* TEMP */
 .rele-title img {
     width: 27px;
 
     margin-left: 27px;
 }
 
+/* TEMP */
 .rule-info {
     display: flex;
     align-items: center;
@@ -196,26 +208,31 @@ button {
     margin-top: 18px;
 }
 
+/* TEMP */
 .rule-main {
     margin-left: 18px;
     font-size: 1.25em;
 }
 
+/* TEMP */
 .rule-delay {
     margin-left: 36px;
     font-size: 1.1em;
 }
 
+/* TEMP */
 .rule-time {
     margin-left: 18px;
     font-size: 1.1em;
 }
 
+/* TEMP */
 .sensor-input {
     width: 210px;
     margin: 0 15px;
 }
 
+/* TEMP */
 .select-comparison {
     appearance: none;
     -webkit-appearance: none;
@@ -230,20 +247,24 @@ button {
     margin-left: 15px;
 }
 
+/* TEMP */
 .osinode-port-separator, .unit {
     margin-left: 15px;
 }
 
+/* TEMP */
 .sensor-value {
     width: 150px;
     margin-left: 15px;
 }
 
+/* TEMP */
 .duration-value, .delay-value {
     width: 90px;
     margin: 0 15px;
 }
 
+/* TEMP */
 .time-selection {
     width: 125px;
     margin: 0 15px;
@@ -299,6 +320,7 @@ button.enter img {
     text-transform: uppercase;
 }
 
+/* TEMP */
 .add-osirele-div img {
     width: 39px;
     margin-left: 16px;
@@ -312,4 +334,132 @@ button.enter img {
 
     text-align: center;
     font-size: 1.1em;
+}
+
+@media (max-width: 1000px) {
+
+    #login > b {
+        padding: 0 10px;
+    }
+
+    #login-form > div {
+        flex-direction: column;
+    }
+
+    #login-form > div label {
+        width: 115px;
+    }
+
+    #login-form > div > div:not(:last-child) {
+        margin-right: 0;
+        margin-bottom: 21px;
+    }
+
+}
+
+@media (max-width: 725px) {
+
+    #login {
+        width: 87.5%;
+    }
+
+    .reles {
+        width: 87.5%;
+        padding: 20px 2.5%;
+    }
+
+    .user-select {
+        flex-direction: column;
+    }
+
+    .user-select:not(.no-user-selected) {
+        width: 95%;
+        padding: 15px 2.5%;
+    }
+
+    .user-select span {
+        margin-right: 0;
+        margin-bottom: 16px;
+    }
+
+}
+
+@media (max-width: 600px) {
+
+    html {
+        font-size: 19px;
+    }
+
+    input {
+        font-size: 1.1em;
+    }
+
+}
+
+@media (max-width: 500px) {
+
+    #login-form > div > div {
+        flex-direction: column;
+    }
+
+    #login-form > div > div > *:not(:last-child) {
+        margin-right: 0;
+        margin-bottom: 8px;
+    }
+
+    #login-form > div label {
+        width: unset;
+    }
+
+    #login-form > div > div:not(:last-child) {
+        margin-right: 0;
+        margin-bottom: 16px;
+    }
+
+    .user-select div {
+        width: 100%;
+
+        flex-direction: column;
+    }
+
+    .user-select input {
+        width: 95% !important;
+    }
+
+    .enter {
+        width: 30px !important;
+        height: 30px !important;
+
+        margin-top: 16px !important;
+        margin-left: 0px !important;
+    }
+
+    button.enter img {
+        width: 21px !important;
+        height: 21px !important;
+    }
+
+}
+
+@media (max-width: 350px) {
+
+    #login-form input[type=text], #login-form input[type=password], #login-form input[type=submit] {
+        width: 90%;
+    }
+
+    .user-select {
+        padding: 0 2.5%;
+    }
+
+    .main-error {
+        padding: 0 !important;
+        padding-top: 15px !important;
+
+        font-size: 0.8em;
+    }
+
+    .rules-title {
+        margin: 27px 0 !important;
+    }
+
 }
