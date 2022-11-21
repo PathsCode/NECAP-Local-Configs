@@ -19,7 +19,6 @@ if (file_exists("/srv/data/sysname")) {
 ?>
 
 <script>
-    /* TEMP: Adjust based on Multiples */
     function emptyRule(emptyButton) {
         rele = emptyButton.parentNode.parentNode;
         rele.getElementsByClassName('osinode-selection')[0].selectedIndex = 0;
@@ -57,6 +56,13 @@ if (file_exists("/srv/data/sysname")) {
                 unitInfo.innerText = possibleData[UNIT];
             }
         });
+    }
+
+    function onTimeChange(changedElement, className) {
+        similarInputs = document.getElementsByClassName(className);
+        for (indexxx = 0; indexxx < similarInputs.length; indexxx++) {
+            similarInputs[indexxx].value = changedElement.value;
+        }
     }
 
     osinodes = <?= json_encode($osinodes) ?>;
@@ -105,7 +111,15 @@ if (file_exists("/srv/data/sysname")) {
                 </button>
             </div>
             
-            <?php if ($allData) : ?>
+            <?php if ($error) : ?>
+                <div class="main-error rele">
+                    <span>Errore di Connessione al database NECAP.TECH</span>
+                </div>
+            <?php elseif (!$allData) : ?>
+                <div class="main-error rele">
+                    <span>Non ci sono OsiNODE / Sensori per l'utente selezionato</span>
+                </div>
+            <?php else : ?>
                 <?php foreach ($OSIRELES_NAMES as $ReleName) : ?>
                     <div class="osirele">
                         <div class="osirele-title-div">
@@ -173,9 +187,9 @@ if (file_exists("/srv/data/sysname")) {
                                 </div>
                                 <div class="rule-time rule-info">
                                     <span>La Regola è in funzione dalle</span>
-                                    <input name="<?= "timesettings[" . $releId . "][startTime][]" ?>" type="time" value="<?= $releStart ?>" placeholder="00:00" class="start-time time-selection">
+                                    <input name="<?= "timesettings[" . $releId . "][startTime][]" ?>" type="time" value="<?= $releStart ?>" placeholder="00:00" class="start<?= $releId ?> start-time time-selection" onchange="onTimeChange(this, 'start<?= $releId ?>')">
                                     <span>alle</span>
-                                    <input name="<?= "timesettings[" . $releId . "][endTime][]" ?>" type="time" value="<?= $releEnd ?>" placeholder="23:59" class="end-time time-selection">
+                                    <input name="<?= "timesettings[" . $releId . "][endTime][]" ?>" type="time" value="<?= $releEnd ?>" placeholder="23:59" class="end<?= $releId ?> end-time time-selection" onchange="onTimeChange(this, 'end<?= $releId ?>')">
                                 </div>
                             </div>
                         <?php endfor; ?>

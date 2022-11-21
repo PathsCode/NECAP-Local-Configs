@@ -230,25 +230,31 @@
         // Get User Data
         $userEmail = rtrim(shell_exec("cat " . RULES_DIR . "ownerEmail"));
         if ($userEmail) {
-            $PDO = new PDO('mysql:host=65.109.11.231; dbname=necap;
-            charset=utf8', 'localconfiguser', 'local');
-            $PDO->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-            $sql = 'SELECT `osinode`.`osinodeId`, `portId`, `param`, `formula`, `unit` FROM `sensor-types` INNER JOIN `sensor` ON `sensor-types`.`id` = `sensor`.`sensorTypeId` INNER JOIN `osinode-sensors` ON `sensor`.`id` = `osinode-sensors`.`sensorId` INNER JOIN `osinode` ON `osinode-sensors`.`osinodeId` = `osinode`.`id` INNER JOIN `user-osinodes` ON `osinode`.`id` = `user-osinodes`.`osinodeId` INNER JOIN `user` ON `userId` = `user`.`id` WHERE `email` = :userEmail';
-            $pars = ['userEmail' => $userEmail];
-
-            $query = $PDO->prepare($sql);
-            $query->execute($pars);
-
-            $allData = $query->fetchAll();
-
-            $osinodes = [];
-            $osinodesNames = [];
-            foreach ($allData as $singleData) {
-                $osinodes[$singleData[OSINODE_ID]][] = $singleData;
-                if (!in_array($singleData[OSINODE_ID], $osinodesNames)) {
-                    $osinodesNames[] = $singleData[OSINODE_ID];
+            try {
+                $PDO = new PDO('mysql:host=65.109.11.231; dbname=necap;
+                charset=utf8', 'localconfiguser', 'local');
+                $PDO->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    
+                $sql = 'SELECT `osinode`.`osinodeId`, `portId`, `param`, `formula`, `unit` FROM `sensor-types` INNER JOIN `sensor` ON `sensor-types`.`id` = `sensor`.`sensorTypeId` INNER JOIN `osinode-sensors` ON `sensor`.`id` = `osinode-sensors`.`sensorId` INNER JOIN `osinode` ON `osinode-sensors`.`osinodeId` = `osinode`.`id` INNER JOIN `user-osinodes` ON `osinode`.`id` = `user-osinodes`.`osinodeId` INNER JOIN `user` ON `userId` = `user`.`id` WHERE `email` = :userEmail';
+                $pars = ['userEmail' => $userEmail];
+    
+                $query = $PDO->prepare($sql);
+                $query->execute($pars);
+    
+                $allData = $query->fetchAll();
+    
+                $osinodes = [];
+                $osinodesNames = [];
+                foreach ($allData as $singleData) {
+                    $osinodes[$singleData[OSINODE_ID]][] = $singleData;
+                    if (!in_array($singleData[OSINODE_ID], $osinodesNames)) {
+                        $osinodesNames[] = $singleData[OSINODE_ID];
+                    }
                 }
+
+                $error = false;
+            } catch (PDOException $e) {
+                $error = true;
             }
 
         }

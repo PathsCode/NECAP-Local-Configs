@@ -303,3 +303,13 @@ button.enter img {
     width: 39px;
     margin-left: 16px;
 }
+
+.main-error {
+    margin: 0 !important;
+
+    justify-content: center;
+    align-items: center;
+
+    text-align: center;
+    font-size: 1.1em;
+}
