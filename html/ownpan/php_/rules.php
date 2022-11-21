@@ -200,7 +200,5 @@
 
     }
 
-    // Empty Rule Adjustment
-    // On OsiRELE Adjustment
     // Add OsiRELE Button
     // OsiRELE Template to Import

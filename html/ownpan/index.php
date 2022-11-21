@@ -20,10 +20,10 @@ if (file_exists("/srv/data/sysname")) {
 
 <script>
     /* TEMP: Adjust based on Multiples */
-    function emptyRule(id) {
-        rele = document.getElementById('rele' + id);
+    function emptyRule(emptyButton) {
+        rele = emptyButton.parentNode.parentNode;
         rele.getElementsByClassName('osinode-selection')[0].selectedIndex = 0;
-        rele.getElementsByClassName('port-selection')[0].selectedIndex = 0;
+        rele.getElementsByClassName('port-selection')[0].innerHTML = '';
         rele.getElementsByClassName('select-comparison')[0].selectedIndex = 0;
         rele.getElementsByClassName('sensor-value')[0].value = null;
         rele.getElementsByClassName('unit')[0].innerText = '';
@@ -38,7 +38,7 @@ if (file_exists("/srv/data/sysname")) {
         portSelect = rele.getElementsByClassName('port-selection')[0];
         unitInfo = rele.getElementsByClassName('unit')[0];
 
-        portSelect.innerHTML = '<select name="rele' + id + '"][port]" class="select-comparison port-selection" >';
+        portSelect.innerHTML = '<select>';
         osinodes[osinodeInputEl.value].forEach(possibleData => {
             portSelect.innerHTML += '<option value="' + possibleData[PORT_ID] + '">' + possibleData[PARAM] + ' (' + possibleData[PORT_ID] + ')</option>';
         });
@@ -139,7 +139,7 @@ if (file_exists("/srv/data/sysname")) {
                             <div class="rele" id="<?= "rele" . $releId ?>">
                                 <div class="rele-title flex">
                                     <h2>RELÈ <?= $releId; ?></h2>
-                                    <img src="/css_/x-png-33.png" class="delete-rule cursor" onclick="emptyRule(<?= $releId ?>)"/>
+                                    <img src="/css_/x-png-33.png" class="delete-rule cursor" onclick="emptyRule(this)"/>
                                 </div>
                                 <div class="rule-main rule-info">
                                     <span>SE</span>
