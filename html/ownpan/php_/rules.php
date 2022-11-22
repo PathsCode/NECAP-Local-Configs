@@ -131,8 +131,8 @@
                     $osinode = $releData[OSINODE];
                     $port = $releData[PORT];
                     $comparator = isset($releData[COMPARATOR]) ? $releData[COMPARATOR] : '';
-                    $finalValue = $releData[VALUE];
-                    $formula = $releData[FORMULA];
+                    $value = $releData[VALUE];
+                    $formula = $releData[FORMULA] ? $releData[FORMULA] : '';
                     $duration = !empty($releData[DURATION]) ? $releData[DURATION] : '0';
                     $delay = !empty($releData[DELAY]) ? $releData[DELAY] : '0';
 
@@ -147,27 +147,6 @@
                     }
 
                     if (!$comparator) continue;
-
-                    // Get Raw Data
-                    $expression = $finalValue . " = " . $formula;
-                    $value = $finalValue;
-                    echo $formula . ' ' . $finalValue . ' "' . $expression . '"<br/>';
-
-                    /*
-                    function getValue($expr = "", $x = 0, $decDigits = 3) {
-                        if ($expr == null || strtolower($expr) == "null") {
-                            return $expr;
-                        }
-
-                        $expr = str_replace("x", $x, $expr);
-
-                        if (!preg_match("/[^0-9\(\)\+\-\/\*\.]/", $expr)) {
-                            $value = round(eval("return " . $expr . ";"), $decDigits);  // Formula 
-                        } else {
-                            $value = null;  // Malicious Code
-                        }
-                    }
-                    */
 
                     // Save Config
                     $config = "threshold\n$osinode\n$port\n$comparator\n$value\n$duration\n$delay";
@@ -231,7 +210,6 @@
         shell_exec("echo \"" . $activeOsiRELEStxt . "\" > " . RULES_DIR . "osiRele");
 
         // Redirect
-        exit();
         header("Location: /"); 
         exit();
 

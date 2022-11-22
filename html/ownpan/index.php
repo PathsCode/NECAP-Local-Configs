@@ -18,6 +18,11 @@ if (file_exists("/srv/data/sysname")) {
 
 ?>
 
+<script src="https://cdn.jsdelivr.net/npm/nerdamer@latest/nerdamer.core.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/nerdamer@latest/Algebra.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/nerdamer@latest/Calculus.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/nerdamer@latest/Solve.js"></script>
+
 <script>
     function emptyRule(emptyButton) {
         rele = emptyButton.parentNode.parentNode;
@@ -66,6 +71,42 @@ if (file_exists("/srv/data/sysname")) {
         similarInputs = document.getElementsByClassName(className);
         for (indexxx = 0; indexxx < similarInputs.length; indexxx++) {
             similarInputs[indexxx].value = changedElement.value;
+        }
+    }
+
+    function onValueChange(valueElement) {
+        releValuesData = valueElement.parentNode;
+
+        value = valueElement.value;
+        rawInput = releValuesData.getElementsByClassName('sensor-raw-value')[0];
+        formula = releValuesData.getElementsByClassName('formula')[0].value; 
+
+        if (value && formula) {
+
+            if (formula == 'x') {
+                
+                x = [value];
+
+            } else {
+            
+                equation = value + " = " + formula;
+                x = nerdamer(equation).solveFor('x');
+                
+                console.log(equation + " => [" + x + "]");
+                console.log(x.length)
+            
+            }
+
+            rawInput.value = x[0].toString();
+
+        } else {
+            rawInput.value = '';
+        }
+    }
+
+    function preventDot(event) {
+        if (event.key == '.') {
+            event.preventDefault();
         }
     }
 
@@ -140,11 +181,11 @@ if (file_exists("/srv/data/sysname")) {
                                     $releOsinode = $releContent[1];
                                     $relePort = $releContent[2];
                                     $releComparator = $releContent[3]; /* */
-                                    $releValue = $releContent[4]; /* */
+                                    $releRawValue = $releContent[4]; /* */
                                     $releDuration = $releContent[5]; 
                                     $releDelay = $releContent[6]; 
                                 } else {
-                                    $releOsinode = $relePort = $releComparator = $releValue = $releDuration = $releDelay = "";
+                                    $releOsinode = $relePort = $releComparator = $releRawValue = $releValue = $releDuration = $releDelay = "";
                                 }
 
                                 $releTimeFile = RULES_DIR . TIMERANGE . "." . $releId;
@@ -163,6 +204,7 @@ if (file_exists("/srv/data/sysname")) {
                                         if ($relePort == $possibleData[PORT_ID]) {
                                             $releFormula = $possibleData[FORMULA];
                                             $releUnit = $possibleData[UNIT];
+                                            $releValue = eval('return ' . str_replace('x', $releRawValue, $releFormula) . ';');
                                         }
                                     }
                                 }
@@ -195,7 +237,8 @@ if (file_exists("/srv/data/sysname")) {
                                             <option <?= $releComparator == MINOR_THAN ? 'selected' : '' ?>><</option>
                                             <option <?= $releComparator == MAJOR_THAN ? 'selected' : '' ?>>></option>
                                         </select>
-                                        <input name="<?= "rele[" . $ReleName . "][" . $releId . "][value]" ?>" type="number" value="<?= $releValue ?>" placeholder="Valore" class="sensor-value">
+                                        <input type="number" value="<?= $releValue ?>" placeholder="123,4" step="0.1" class="sensor-value" onkeydown="preventDot(event)" onkeyup="onValueChange(this)">
+                                        <input name="<?= "rele[" . $ReleName . "][" . $releId . "][value]" ?>" type="hidden" value="<?= $releRawValue ?>" class="sensor-raw-value none">
                                         <input name="<?= "rele[" . $ReleName . "][" . $releId . "][formula]" ?>" type=hidden value="<?= $releFormula ? $releFormula : '' ?>" class="formula">
                                         <span class="unit"><?= $releUnit ? $releUnit : '' ?></span>
                                     </div>
