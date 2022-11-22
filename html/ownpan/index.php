@@ -42,6 +42,9 @@ if (file_exists("/srv/data/sysname")) {
         rele = osinodeInputEl.parentNode;
         portSelect = rele.getElementsByClassName('port-selection')[0];
         unitInfo = rele.getElementsByClassName('unit')[0];
+        
+        rele.getElementsByClassName('sensor-value')[0].value = null;
+        rele.getElementsByClassName('sensor-raw-value')[0].value = null;
 
         portSelect.innerHTML = '<select>';
         portSelect.innerHTML += '<option disabled selected value class="none"> --- </option>';
@@ -58,6 +61,9 @@ if (file_exists("/srv/data/sysname")) {
         rele = portInputEl.parentNode;
         unitInfo = rele.getElementsByClassName('unit')[0];
         formulaInfo = rele.getElementsByClassName('formula')[0];
+
+        rele.getElementsByClassName('sensor-value')[0].value = null;
+        rele.getElementsByClassName('sensor-raw-value')[0].value = null;
 
         osinodes[osinodeName].forEach(possibleData => {
             if (possibleData[PORT_ID] == portInputEl.value) {
