@@ -18,10 +18,10 @@ if (file_exists("/srv/data/sysname")) {
 
 ?>
 
-<script src="https://cdn.jsdelivr.net/npm/nerdamer@latest/nerdamer.core.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/nerdamer@latest/Algebra.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/nerdamer@latest/Calculus.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/nerdamer@latest/Solve.js"></script>
+<script src="/js_/nerdamer.core.js"></script>
+<script src="/js_/Algebra.js"></script>
+<script src="/js_/Calculus.js"></script>
+<script src="/js_/Solve.js"></script>
 
 <script>
     function emptyRule(emptyButton) {
