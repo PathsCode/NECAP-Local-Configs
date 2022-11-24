@@ -98,12 +98,12 @@ if (file_exists("/srv/data/sysname")) {
                 equation = value + " = " + formula;
                 x = nerdamer(equation).solveFor('x');
                 
-                console.log(equation + " => [" + x + "]");
-                console.log(x.length)
+                // console.log(equation + " => [" + x + " => " + Math.round(x[0].text('decimals')) + "]");
+                // console.log(x.length)
             
             }
 
-            rawInput.value = x[0].toString();
+            rawInput.value = Math.round(x[0].text('decimals'));
 
         } else {
             rawInput.value = '';
@@ -133,7 +133,7 @@ if (file_exists("/srv/data/sysname")) {
     </head>
 
     <body class="flex-vertical">
-        <h1>OsiGATE: <i><?php echo $sysname ?></i></h1>
+        <h1>OsiGATE: <i><?= $sysname ?></i></h1>
         <div class="flex-vertical" id="login">
             <b>Login ADMIN</b>
             <form action="" method="post" class="flex-vertical" id="login-form" autocomplete="off">
@@ -243,7 +243,7 @@ if (file_exists("/srv/data/sysname")) {
                                             <option <?= $releComparator == MINOR_THAN ? 'selected' : '' ?>><</option>
                                             <option <?= $releComparator == MAJOR_THAN ? 'selected' : '' ?>>></option>
                                         </select>
-                                        <input type="number" value="<?= $releValue ?>" placeholder="123,4" step="0.1" class="sensor-value" onkeydown="preventDot(event)" onkeyup="onValueChange(this)">
+                                        <input type="number" value="<?= $releValue ?>" placeholder="123,4" step="any" class="sensor-value" onkeydown="preventDot(event)" onkeyup="onValueChange(this)">
                                         <input name="<?= "rele[" . $ReleName . "][" . $releId . "][value]" ?>" type="hidden" value="<?= $releRawValue ?>" class="sensor-raw-value none">
                                         <input name="<?= "rele[" . $ReleName . "][" . $releId . "][formula]" ?>" type=hidden value="<?= $releFormula ? $releFormula : '' ?>" class="formula">
                                         <span class="unit"><?= $releUnit ? $releUnit : '' ?></span>
