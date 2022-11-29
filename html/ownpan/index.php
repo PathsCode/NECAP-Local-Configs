@@ -165,7 +165,11 @@ if (file_exists("/srv/data/sysname")) {
                 </div>
             </div>
             
-            <?php if ($connError) : ?>
+            <?php if (!$userEmail) : ?>
+                <div class="main-error rele">
+                    <span>Selezionare un utente per procedere</span>
+                </div>
+            <?php elseif ($connError) : ?>
                 <div class="main-error rele">
                     <span>Errore di Connessione al database NECAP.TECH</span>
                 </div>
