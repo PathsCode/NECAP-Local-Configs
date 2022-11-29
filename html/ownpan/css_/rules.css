@@ -35,12 +35,44 @@ html {
 }
 
 h1 {
+    max-width: 90%;
     margin-top: 30px;
+
     color: red;
 }
 
 input {
     font-size: 0.9em;
+}
+
+input[type="text"] {
+    padding: 1px 2px;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    appearance: none;
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    appearance: textfield;
+    -moz-appearance: textfield;
+}
+
+input::placeholder {
+    opacity: .7; 
+}
+
+input::-webkit-input-placeholder {
+    opacity: 0.7;
+}
+
+button {
+    background: none;
+    border: none;
+    cursor: pointer;
 }
 
 .none {
@@ -49,6 +81,10 @@ input {
 
 .cursor {
     cursor: pointer;
+}
+
+.full-width {
+    width: 100% !important;
 }
 
 .flex {
@@ -120,6 +156,21 @@ input {
     margin: 36px 0 !important;
 }
 
+.osirele:not(:first-child).osirele:not(:nth-child(2)) {
+    margin-top: 64px;
+}
+
+.osirele-title-div {
+    margin-bottom: 0 !important;
+}
+
+.osirele-title {
+    font-weight: bold;
+    font-size: 1.75em;
+
+    color: red;
+}
+
 .reles {
     width: 80%;
     padding: 40px 2.5%; 
@@ -130,7 +181,7 @@ input {
     background-color: white;
 }
 
-.rele {
+.rele, .osirele-title-div {
     width: 96%;
     padding: 15px 2%;
 
@@ -138,14 +189,12 @@ input {
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
-}
 
-.rele:not(:first-of-type) {
-    margin-top: 21px;
-}
-
-.rele {
     margin-bottom: 21px;
+}
+
+.rele:not(:first-child).rele:not(:nth-child(2)) {
+    margin-top: 21px;
 }
 
 .rele h2 {
@@ -158,6 +207,7 @@ input {
     background-color: var(--RED);
 
     font-size: 1em;
+    word-break: break-all;
 }
 
 .rele-title img {
@@ -188,7 +238,7 @@ input {
     font-size: 1.1em;
 }
 
-.sensor-input {
+.sensor-input { /* Easter Egg from "Old" Version that lasted less than 1 Day */
     width: 210px;
     margin: 0 15px;
 }
@@ -198,16 +248,22 @@ input {
     -webkit-appearance: none;
     -moz-appearance: none;
 
-    text-indent: 1px;
+    text-indent: 0px;
     text-overflow: '';
 
     padding: 5px 10px;
     font-size: .9em;
+
+    margin-left: 15px;
+}
+
+.osinode-port-separator, .unit {
+    margin-left: 15px;
 }
 
 .sensor-value {
     width: 150px;
-    margin: 0 15px;
+    margin-left: 15px;
 }
 
 .duration-value, .delay-value {
@@ -216,6 +272,291 @@ input {
 }
 
 .time-selection {
-    width: 90px;
+    width: 125px;
     margin: 0 15px;
+}
+
+.user-select {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.user-select span {
+    margin-right: 20px;
+
+    font-size: 1.1em;
+    font-weight: bold;
+}
+
+.user-select input[type=text] {
+    width: 360px;
+}
+
+.user-select.no-user-selected {
+    margin-bottom: 0px !important;
+}
+
+button.enter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    margin: auto 0;
+    margin-left: 10px;
+    background-color: red;
+}
+
+button.enter img {
+    width: 27px;
+    height: 27px;
+}
+
+.add-osirele-div {
+    flex-direction: row !important;
+    justify-content: flex-start;
+    align-items: center;
+
+    font-weight: bold;
+    font-size: 1.25em;
+}
+
+.add-osirele-div span {
+    text-transform: uppercase;
+}
+
+.add-osirele-div img {
+    width: 39px;
+    margin-left: 16px;
+}
+
+.main-error {
+    margin: 0 !important;
+
+    justify-content: center;
+    align-items: center;
+
+    text-align: center;
+    font-size: 1.1em;
+}
+
+@media (max-width: 1000px) {
+
+    #login > b {
+        padding: 0 10px;
+    }
+
+    #login-form > div {
+        flex-direction: column;
+    }
+
+    #login-form > div label {
+        width: 115px;
+    }
+
+    #login-form > div > div:not(:last-child) {
+        margin-right: 0;
+        margin-bottom: 21px;
+    }
+
+    .rele:last-of-type:not(.add-osirele-div) {
+        margin-bottom: 0 !important;
+    }
+
+    .inline-rule-info {
+        display: inline-block;
+        margin: 0 8px;
+        margin-top: 18px;
+        
+        text-align: justify;
+    }
+
+    .inline-rule-info .rule-info {
+        display: inline;
+        margin-left: 0 !important;
+
+        line-height: 42px;
+
+        font-size: 1em !important; 
+        text-align: justify;
+    }
+
+    .rule-info > * {
+        margin: 0 !important;
+    } 
+
+    .rele select {
+        padding: 3px 6px;    
+    }
+
+    .rele input {
+        padding: 1px 0; 
+    }
+
+    .sensor-value {
+        width: 100px;
+    }
+
+    .duration-value, .delay-value {
+        width: 60px;
+    }
+
+    .time-selection {
+        width: 100px;
+    }
+
+}
+
+@media (max-width: 725px) {
+
+    #login {
+        width: 87.5%;
+    }
+
+    .reles {
+        width: 87.5%;
+        padding: 20px 2.5%;
+    }
+
+    .reles:not(.no-user-selected) {
+        padding-bottom: 36px;
+    }
+
+    .user-select {
+        flex-direction: column;
+    }
+
+    .user-select:not(.no-user-selected) {
+        width: 95%;
+        padding: 15px 2.5%;
+    }
+
+    .user-select span {
+        margin-right: 0;
+        margin-bottom: 16px;
+    }
+
+}
+
+@media (max-width: 600px) {
+
+    html {
+        font-size: 19px;
+    }
+
+    input {
+        font-size: 0.95em;
+    }
+
+    select {
+        font-size: 1em;
+    }
+
+    .osirele:not(:first-child).osirele:not(:nth-child(2)) {
+        margin-top: 42px;
+    }
+
+    .rele {
+        margin-bottom: 9px;
+    }
+
+    .rele:not(:first-child).rele:not(:nth-child(2)) {
+        margin-top: 9px;
+    }
+
+    .time-selection {
+        width: 90px !important;
+    }
+
+    .rele-title img {
+        width: 24px;
+
+        margin-left: 24px;
+    }
+
+    .add-osirele-div {
+        display: inline-flex;
+        justify-content: center;
+    }
+
+    .add-osirele-div img {
+        width: 32px;
+        margin-left: 16px;
+    }
+
+}
+
+@media (max-width: 500px) {
+
+    #login-form > div > div {
+        flex-direction: column;
+    }
+
+    #login-form > div > div > *:not(:last-child) {
+        margin-right: 0;
+        margin-bottom: 8px;
+    }
+
+    #login-form > div label {
+        width: unset;
+    }
+
+    #login-form > div > div:not(:last-child) {
+        margin-right: 0;
+        margin-bottom: 16px;
+    }
+
+    .user-select div {
+        width: 100%;
+
+        flex-direction: column;
+    }
+
+    .user-select input {
+        width: 95% !important;
+    }
+
+    .enter {
+        width: 30px !important;
+        height: 30px !important;
+
+        margin-top: 16px !important;
+        margin-left: 0px !important;
+    }
+
+    button.enter img {
+        width: 21px !important;
+        height: 21px !important;
+    }
+
+}
+
+@media (max-width: 350px) {
+
+    #login-form input[type=text], #login-form input[type=password], #login-form input[type=submit] {
+        width: 90%;
+    }
+
+    .user-select {
+        padding: 0 2.5%;
+    }
+
+    .main-error {
+        padding: 0 !important;
+        padding-top: 15px !important;
+
+        font-size: 0.8em;
+    }
+
+    .rules-title {
+        margin: 27px 0 !important;
+    }
+
+    .update-rules {
+        width: 90%;
+        
+        font-size: .95em;
+    }
+
 }
